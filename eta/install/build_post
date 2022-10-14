@@ -1,0 +1,13 @@
+#! /bin/csh -f
+
+
+cd ../../quilt/
+make
+
+cd ../post_new
+make
+
+cd ../copygb
+make
+
+make

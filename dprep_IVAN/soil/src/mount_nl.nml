@@ -1,0 +1,6 @@
+C
+      CHARACTER *99       FN_USNAVY,FN_E1,FN_E2,FN_A1,FN_A2
+     &                   ,FN_GT30,FN_MOUNT13
+      NAMELIST /MOUNT_NL/ FN_USNAVY,FN_E1,FN_E2,FN_A1,FN_A2
+     &                   ,FN_GT30,FN_MOUNT13
+C

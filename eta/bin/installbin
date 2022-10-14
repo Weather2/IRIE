@@ -1,0 +1,59 @@
+#! /bin/csh -f
+
+if ( $#argv != 1 ) then
+echo " "
+echo " "
+echo "this script requires one input when running"
+echo " "
+echo "options are: "
+echo " "
+echo "DEC"
+echo "LINUX"
+echo "NORMAL"
+echo " "
+echo "rerun script as "
+echo "installbin DEC "
+echo "or "
+echo "installbin LINUX "
+echo "or "
+echo "installbin NORMAL "
+echo " "
+echo " "
+exit
+endif
+
+if ( $1 == "DEC" || $1 == "LINUX" ) then
+
+uncompress rev_smlend_norad.tar.Z
+tar xf rev_smlend_norad.tar
+compress rev_smlend_norad.tar
+
+# uncompress dec_linux_norad.tar.Z
+# tar xf dec_linux_norad.tar
+# compress dec_linux_norad.tar
+
+cd ../runs/
+# tar xf dec_linux_radfiles.tar
+tar xf rev_litend_rad.tar
+cd ../bin/
+
+endif
+
+
+if ( $1 == "NORMAL" ) then
+
+# uncompress bigend_norad.tar.Z
+# tar xf bigend_norad.tar
+# compress bigend_norad.tar
+
+uncompress rev_bigend_norad.tar.Z
+tar xf rev_bigend_norad.tar
+compress rev_bigend_norad.tar
+
+cd ../runs/
+# tar xf bigend_rad.tar
+tar xf rev_bigend_rad.tar
+cd ../bin/
+
+endif
+

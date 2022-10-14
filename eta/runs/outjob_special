@@ -1,0 +1,131 @@
+#! /bin/csh -f
+
+set yy=`date +%y`
+set mm=`date +%m`
+set dd=`date +%d`
+
+set ymd=$yy$mm$dd
+
+###################################################################
+#
+#  head is used to define symbolic links.  On HP's it should be "ftn"
+#  Believe most other machines (SGI's and Suns, at least) use "fort."
+#
+set head="fort."
+#
+#######################
+
+if ( $#argv < 3 ) then
+echo "need three arguments "
+echo "first is starting time"
+echo "second is ending fore hr"
+echo "third is interval"
+exit
+endif
+
+if ( $#argv == 3 ) then
+echo "if include type (latlon or lmbc) as argument 4"
+echo "and a gempak file name as argument 5"
+echo "the file will automatically be degribbed using GEMPAKs"
+echo "nagrib program"
+echo " "
+echo " "
+echo "if you dont use GEMPAK, ignore this"
+echo " "
+endif
+
+#--------------------------------------------------------------                 
+set out_dir = `pwd`
+setenv COMSP ${out_dir}/
+echo $COMSP
+setenv fcsthr 00                             
+setenv tmmark t00s               
+
+set tstart = $1
+set tend = $2
+set numtimes = $2
+@ numtimes -= $1
+@ numtimes /= $3
+@ numtimes ++
+set invar="$1 $numtimes $3"
+
+echo starting at forecast time $1 and doing $numtimes at $3 hour intervals
+sleep 2
+echo $invar > namelist.$tstart
+
+#------------------
+#
+# QUILT JOB
+#
+#------------------
+
+echo "quilting up"
+../exe/quilt.x < namelist.$tstart >& quilt.$tstart.log
+
+#------------------------
+#
+# POST JOB
+#
+#------------------------
+
+#-----------------------------------------------------------------------        
+
+echo "start post"
+cat namelist.$tstart
+../exe/etapost_new.x < namelist.$tstart >& post.$tstart.log
+
+#### Now extract a more friendly output grid 
+
+# cp ../../copygb/copygb.x .
+
+set gridlmb=`cat outjob_input_lmbc` 
+echo $gridlmb
+set gridlat=`cat outjob_input_lat`
+set gridlat='255 0 401 201 30000 -20000 128 63200 46400 166 166 64'
+echo $gridlat
+set hr=000
+set hrsave=000
+
+while ($hrsave <= $tend )
+
+if ( $hrsave >= $1 ) then
+
+if ($hrsave >= 100) set hr=$hrsave
+if ($hrsave < 100 && $hrsave != 000) set hr=0${hrsave}
+if ($hrsave < 10 && $hrsave != 000) set hr=0${hr}
+set input=EGRD3D${hr}.${tmmark}
+set outputlmb=lmbc_$hr
+set outputlat=latlon_$hr
+
+ls -l $input
+if ( $4 == lmbc ) then
+../exe/copygb.x -g"$gridlmb" -s"2,-3" -x $input $outputlmb
+endif
+
+if ( $4 == latlon ) then
+../exe/copygb.x -g"$gridlat" -s"-100,0" -x $input $outputlat
+if ( -r $outputlat ) then
+touch latlondone${hr}.${tmmark}
+rm -f EGRD3D${hr}.${tmmark}
+rm -f restrt${hr}.*
+endif
+endif
+
+#decimal copygb.x -g"$gridlmb" -x $input $outputlmb
+#decimal copygb.x -g"$gridlat" -x $input $outputlat
+
+endif
+
+@ hrsave += $3
+end
+
+rm quilt.$tstart.log
+rm post.$tstart.log
+rm namelist.$tstart
+
+echo "End of Output Job"                                                        
+
+if ( $#argv == 5 ) then
+./gem_degrib.com $5 $2 $3 $4
+endif
+exit                                                                            

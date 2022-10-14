@@ -1,0 +1,67 @@
+	 Program readwrite
+
+        parameter (layers=60)
+
+	parameter (ISTART=26,IEND=59)
+
+        real*4 deta(layers), ldt1(layers)
+        real*4 detanew(layers)
+
+        REWIND 11
+        read(11)DETA,LDT1
+
+	detanew=deta
+
+	sum=0.
+        do I=1,ISTART-1
+	sum=sum+deta(i)
+        enddo
+
+	write(6,*) 'sum of excluded part: ', sum
+
+!	work=1.-sum
+	
+	sumnew=0.
+	
+	detanew(48)=.0055
+	detanew(49)=.0053
+	detanew(50)=.00515
+	detanew(51)=.0050
+	detanew(52)=.0049
+	detanew(53)=.0048
+	detanew(54)=.0047
+	detanew(55)=.0046
+	detanew(56)=.0045
+	detanew(57)=.0044
+	detanew(58)=.0043
+	detanew(59)=.0037
+
+	do I=48,59
+	sumnew=sumnew+(detanew(I)-deta(I))
+	enddo
+
+	write(6,*) 'have a total of ', sumnew , 'to play with'
+
+	rinc=sumnew/(IEND-ISTART+1)
+	write(6,666) sumnew/(IEND-ISTART+1)
+
+  103	format(I2,1x,f9.6,1x,f9.6,1x,f9.6)
+  666	format(f12.8)
+
+	do I=ISTART,IEND
+	detanew(I)=detanew(I)-rinc
+	enddo
+
+	sum=0.
+	sumtwo=0.
+	do I=1,layers
+	write(6,103) I,detanew(I),deta(I),detanew(I)-deta(I)
+	sum=sum+deta(I)
+	sumtwo=sumtwo+detanew(I)
+	enddo
+
+	write(6,*) 'old, new deta sums: ', sum,sumtwo
+
+        write(51)DETANEW,ldt1
+
+        end

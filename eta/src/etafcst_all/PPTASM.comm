@@ -1,0 +1,19 @@
+       COMMON /PPTASM/
+     & PHOUR(IDIM1:IDIM2,JDIM1:JDIM2)
+     &,TLATCU(IDIM1:IDIM2,JDIM1:JDIM2,LM)
+     &,TLATGS(IDIM1:IDIM2,JDIM1:JDIM2,LM)
+     &,PPTDAT(IDIM1:IDIM2,JDIM1:JDIM2,3),APREC(IDIM1:IDIM2,JDIM1:JDIM2)
+     &,ICTP(IDIM1:IDIM2,JDIM1:JDIM2,3)
+     &,MTSTPE,ITSTLOC,JTSTLOC
+C   APREC - grid-scale precip, calculated in PRECPD.  Didn't seem to serve
+C   any particular purpose.  I'm just going to include it in the common
+C   block and use it to figure out how much of the precip at each timestep
+C   is convective.
+C  
+C   TLATCU: CUCNVC latent heat
+C   TLATGS: grid-scale latent heat
+C   heat, which is kept track of by Brad in TMOD.
+C
+C   ITSTLOC, JTSTLOC, MTSTPE: local (itest,jtest) point, and the node it
+C   belongs to
+

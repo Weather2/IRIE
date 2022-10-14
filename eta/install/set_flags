@@ -1,0 +1,86 @@
+#! /bin/sh
+
+#-------------------------------------------------------------------------------
+# COMPAILING OPTION
+#-------------------------------------------------------------------------------
+
+itype_fort=1
+
+MPI_FC="mpif90"
+
+MPIRUN_ARG="--use-hwthread-cpus"
+
+if [ $itype_fort -eq 1 ] ; then
+echo "---------"
+echo "PGI      "
+echo "---------"
+FC="pgf90"
+FFLAGS="-fast -mcmodel=medium"
+FFext="-Mextend"
+LDFLAGS=""
+elif [ $itype_fort -eq 2 ] ; then
+echo "---------"
+echo "GFORTRAN "
+echo "---------"
+FC="gfortran"
+FFLAGS="-ffast-math -mcmodel=medium -w"
+FFext="-ffixed-line-length-132"
+LDFLAGS=""
+elif [ $itype_fort -eq 3 ] ; then
+echo "---------"
+echo "INTEL    "
+echo "---------"
+FC="ifort"
+FFLAGS="-O2 -assume byterecl -mcmodel=medium -shared-intel -heap-arrays"
+FFext="-extend-source"
+LDFLAGS="-shared-intel"
+else
+echo "---------"
+echo "TEST    "
+echo "---------"
+FC="pgf90"
+FFLAGS="-C -Ktrap=fp -traceback"
+FFext="-Mextend"
+LDFLAGS=""
+fi
+
+echo "MPI_FC=$MPI_FC"
+echo "MPIRUN_ARG=$MPIRUN_ARG"
+echo "FC=$FC"
+echo "FFLAGS=$FFLAGS"
+echo "FFext=$FFext"
+echo "LDFLAGS=$LDFLAGS"
+
+#-------------------------------------------------------------------------------
+# END OF OPTION
+#-------------------------------------------------------------------------------
+
+cd ../src/configure
+
+cat make.inc.in | sed s:mpiin:"$MPI_FC": | sed s:fcin:"$FC": | sed s:fflagsin:"$FFLAGS": | sed s:ffextin:"$FFext": | sed s:ffld:"$LDFLAGS": > make.inc
+
+cd ../../bin
+
+cat new_prep.sh.in.in | sed s:fcin:"$FC": | sed s:fflagsin:"$FFLAGS": > new_prep.sh.in
+
+cd ../runs
+
+cat run.com_mpi.in.in | sed s:mpirun_arg:"$MPIRUN_ARG": > run.com_mpi.in
+
+cd ../../libraries/w3lib-1.4
+
+cat Makefile.in | sed s:fcin:"$FC": | sed s:fflagsin:"$FFLAGS": > Makefile
+
+cd ../iplib.source.le
+
+cat compallip.sh.in | sed s:fcin:"$FC": | sed s:fflagsin:"$FFLAGS": > compallip.sh
+
+cd ../ei_bufrlib.source
+
+cat makebufrlib.sh.in | sed s:fcin:"$FC": | sed s:fflagsin:"$FFLAGS": > makebufrlib.sh
+
+cd ../dummyMPI
+
+cat Makefile.in | sed s:fcin:"$FC": | sed s:fflagsin:"$FFLAGS": > Makefile
+
+exit

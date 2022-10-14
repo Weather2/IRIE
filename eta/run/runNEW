@@ -1,0 +1,91 @@
+#!/bin/sh
+
+source common.sh
+
+echo 'Model root:' $MODELROOT
+
+cd $MODELROOT/eta/runs
+echo `pwd`
+
+#-----------------------------------------------------------------------
+ok=0
+k=1
+while test $k -le $wait_1
+do
+    if [ ! -e "preproc.bc.006" ]; then
+        echo "File for start model preproc.bc.006 is not present sleep $sleep $k"
+        sleep $sleep
+    else
+        ok=1
+        k=$wait_1
+    fi
+
+    k=`expr $k + 1`
+done
+
+if [ $ok -eq 0 ]; then
+    exit 1
+else
+    echo "File for start model preproc.bc.006 is present, sleep 5s and start model"
+    sleep 5s
+fi
+#-----------------------------------------------------------------------
+
+echo 'Cleaning old model data'
+rm -f EGRD*
+rm -f fcstdone*
+rm -f latlon*
+rm -f lmbc*
+rm -f restrt*
+rm -f namelist.*
+rm -f post.*
+rm -f quilt.*
+rm -f run.com_mpi.job.*
+
+echo 'Updating fcstdata'
+cat fcstdata.meso.in | sed s:TEIN:"$model_length": > fcstdata.meso
+
+echo 'Running model '
+./run.com_mpi $ncpus > $MODELROOT/LOG_dir/eta.mpi.log 2>&1 &
+
+#-----------------------------------------------------------------------
+ok=0
+k=1
+while test $k -le $wait_2
+do
+    if [ ! -e "fcstdone000.t00s" ]; then
+        echo "File for start post fcstdone000.t00s is not present sleep $sleep $k"
+        sleep $sleep
+    else
+        ok=1
+        k=$wait_2
+    fi
+
+    k=`expr $k + 1`
+done
+
+if [ $ok -eq 0 ]; then
+    exit 2
+else
+    echo "File for start post fcstdone000.t00s is present, sleep 5s and start post"
+    sleep 5s
+fi
+#-----------------------------------------------------------------------
+
+rm fort.*
+ln -s -f fcstdata.meso              fort.11
+ln -s -f cnst.file                  fort.12
+ln -s -f init.file                  fort.13
+ln -s -f cntrl.parm                 fort.14
+ln -s -f wgts1                      fort.20
+ln -s -f omg                        fort.81
+ln -s -f all                        fort.82
+
+cd $MODELROOT/eta/run
+echo `pwd`
+
+for((i=0;i<=$node_count-1;i+=1)); do
+./post_paralell $i > $MODELROOT/LOG_dir/post_paralell_$i.log 2>&1 &
+done
+
+exit 0

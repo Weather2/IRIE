@@ -1,0 +1,7 @@
+FC = fcin
+MPI_FC = mpiin
+FFLAGS = fflagsin
+FFext = ffextin
+LDFLAGS = ffld
+CC = /lib/cpp
+CFLAGS =

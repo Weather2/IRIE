@@ -1,0 +1,8 @@
+C-----------------------------------------------------------------------
+                             C O M M O N /CNVCLD/
+     & CUPPT(IDIM1:IDIM2,JDIM1:JDIM2),CFRACL(IDIM1:IDIM2,JDIM1:JDIM2)
+     &,CFRACM(IDIM1:IDIM2,JDIM1:JDIM2),CFRACH(IDIM1:IDIM2,JDIM1:JDIM2)
+     &,CFRACO(IDIM1:IDIM2,JDIM1:JDIM2)
+     &,CFRACALL(IDIM1:IDIM2,JDIM1:JDIM2,LM)
+     &,CFRACCON(IDIM1:IDIM2,JDIM1:JDIM2,LM)
+C-----------------------------------------------------------------------

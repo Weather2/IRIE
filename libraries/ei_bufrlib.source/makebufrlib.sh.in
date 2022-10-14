@@ -1,0 +1,16 @@
+#!/bin/sh
+
+#
+#     Generate a list of object files that corresponds to the
+#     list of Fortran ( .f ) files in the current directory
+#
+list=`ls *.f | grep '.f' `
+for routine in $list
+do
+name=`echo $routine | cut -f1 -d.`
+	if fcin fflagsin -c -O -o $name.o $name.f
+	then
+	ar r ../bufrlib.a $name.o
+	rm -f $name.o
+	fi
+done

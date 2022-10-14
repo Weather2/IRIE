@@ -1,0 +1,34 @@
+#!/bin/sh
+
+
+cd ../
+ETAROOT=`pwd`
+cd ../
+HOME=`pwd`
+
+cd $ETAROOT/install
+
+cat Makefile.in | sed s:etaroot:$ETAROOT: > Makefile
+
+cd $ETAROOT/namelist
+
+cat ETAIN.in | sed s:home:$HOME: | sed s:etaroot:$ETAROOT: > ETAIN
+cp ETAIN $ETAROOT/bin
+
+cd $ETAROOT/install
+
+./set_flags
+
+./set_parmeta
+
+rm $ETAROOT/exe/*
+rm $ETAROOT/lib/*
+rm $ETAROOT/bin/*.o
+rm $ETAROOT/bin/*.x
+rm $ETAROOT/src/etafcst_all/*.o $ETAROOT/src/etafcst_all/*.f
+
+rm $ETAROOT/../quilt/*.o
+rm $ETAROOT/../post_new/*.o
+rm $ETAROOT/../copygb/*.o
+
+exit 0

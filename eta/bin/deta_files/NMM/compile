@@ -1,0 +1,2 @@
+pgf90 -c -Mfree module_constant.F
+pgf90 -Mfree make_deta_nmm.F -o make_deta_nmm.exe

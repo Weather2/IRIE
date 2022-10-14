@@ -1,0 +1,37 @@
+#!/bin/bash
+
+source common.sh
+
+cd $MODELROOT/eta/runs
+
+counter=0
+while [ "$counter" -lt $1 ]
+do
+counter=$(($counter+1))
+done
+
+while [ $counter -le $model_length ]
+do
+name=`printf "%03d" $counter`
+file="fcstdone"$name".t00s"
+echo $file
+filecheck="latlondone"$name".t00s"
+echo $filecheck
+while [[ !(-f $file) ]]
+do
+echo "cekam "$file" i spavam "$sleep
+sleep $sleep
+done
+if [ -f $file ]; then
+echo "Postoji "$file
+echo "Izvrsavam remote job na frontu"
+./outjob_special $counter $counter 1 latlon
+fi
+if [ -f $filecheck ]; then
+echo "Postoji "$filecheck
+((counter+=$node_count))
+else
+echo "Problem program crash $filecheck, sleep $sleep and Try again"
+sleep $sleep
+fi
+done

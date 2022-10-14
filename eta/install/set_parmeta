@@ -1,0 +1,126 @@
+#! /bin/sh
+
+#################################
+##
+## Primary grid dimensions
+##
+## Note:  LM must be 
+## 38, 45, 50, or 60 (when running Eta coordinates)
+## 25, 30, 38, or 45 (when running sigma coordinates)
+##
+## Note:  JM MUST be odd!
+#
+IM=201
+JM=301
+LM=38
+LSM=20
+#
+#
+########################
+#
+# Note: PT can only be set to 25 or 50 hPa to work properly with
+#	the radiation files included in this package.  
+#
+PT=25
+#
+####################
+#
+# This is used to link files for use by various programs.  Most machines
+# name the linked files as "fort.#", while HP's use "ftn#", where # is the
+# unit number.
+#
+HVAL="fort."
+#
+##########################
+#
+## These should both be =1 unless using multiple CPUs on a machine
+## using "real" MPI (as opposed to the included dummy MPI library).
+##
+## INPES X JNPES = total number of CPUs to be used
+##
+INPES=06
+JNPES=06
+#
+##################################
+#-----------------------------------------------------------------------------#
+#-----------------------------------------------------------------------------#
+
+##############################################
+#
+# should require no changes beyond this point
+#
+##############################################
+
+cp parmeta.mpiin ../src/etafcst_all
+cp parmeta.in ../src/include
+cp parmeta.in parmout.in ../../post_new
+
+cd ../src/etafcst_all
+
+cat parmeta.mpiin | sed s:imin:$IM: | sed s:jmin:$JM: | \
+sed s:lmin:$LM: | sed s:lsmin:$LSM: | sed s:ipcin:$INPES: | \
+sed s:jpcin:$JNPES: > parmeta
+
+if [ $INPES -eq 1 -a $JNPES -eq 1 ]
+then
+
+cp makefile.dummympi makefile
+cp mpif.h_dummy mpif.h
+
+else
+
+cp makefile.realmpi makefile
+rm mpif.h
+
+fi
+
+cd ../../../post_new
+
+cp makefile.dummympi makefile
+cp mpif.h_dummy mpif.h
+
+cat parmeta.in  | sed s:imin:$IM: | sed s:jmin:$JM: | \
+sed s:lmin:$LM: | sed s:lsmin:$LSM:  > parmeta
+
+cat parmout.in | sed s:imin:$IM: | sed s:jmin:$JM: > parmout
+
+cd ../eta/src/include
+
+cat parmeta.in  | sed s:imin:$IM: | sed s:jmin:$JM: | \
+sed s:lmin:$LM: | sed s:lsmin:$LSM:  > parmeta
+
+cd ../../../quilt
+cat parmeta.mpiin | sed s:imin:$IM: | sed s:jmin:$JM: | \
+sed s:lmin:$LM: | sed s:lsmin:$LSM: | sed s:ipcin:$INPES: | \
+sed s:jpcin:$JNPES: > parmeta 
+
+cd ../dprep_IVAN/exe
+
+KLB=`pwd`
+cd ../../
+KLA=`pwd`
+
+cd $KLB
+echo "$KLA" > paramroot
+
+### get appropriate deta and radco2 files
+
+cd ../../eta/bin
+
+mv ETAIN ETAIN.in
+cat ETAIN.in | sed s:imin:$IM: | sed s:jmin:$JM: | sed s:lmin:$LM: \
+| sed s:ptin:${PT}00: > ETAIN
+rm ETAIN.in
+
+cp ./deta_files/deta_${LM} deta
+
+cat new_prep.sh.in | sed s:headin:$HVAL: > new_prep.sh
+
+cd ../runs
+
+cat run.com_mpi.in | sed s:headin:$HVAL: > run.com_mpi
+cat outjob_special.in | sed s:headin:$HVAL: > outjob_special
+cp fcstdata.meso_${LSM}.in fcstdata.meso.in
+
+cp ./rad_files/co2.${LM}_${PT}mb eta.co2.dat
+cp ./rad_files/sigma_co2.${LM}_${PT}mb sigma.co2.dat

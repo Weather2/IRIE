@@ -1,0 +1,41 @@
+#! /bin/csh -f
+
+if ( $#argv != 1 ) then
+echo "NCPUS missing: 0 noMPI >0 MPI"
+exit
+endif
+
+if ($1 < 0) then
+echo "NCPUS must be >=0"
+exit
+endif
+
+date
+
+setenv tmmark t00s
+
+set head="headin"
+
+rm -f EGRD* restrt* fcstdone* latlon* lmbc*
+
+#######################################################
+
+ln -sf init.file                           ${head}13
+
+ln -sf fcstdata.meso 			  ${head}11
+
+ln -sf cnst.file                          ${head}12
+ln -sf co2.dat                            ${head}14
+ln -sf bndy.file                          ${head}16
+ln -sf template.para.tm12                 ${head}21
+ln -sf ZEFF                           ${head}22
+
+########################################################
+
+if ($1 == 0) then
+../exe/etafcst_all.x
+else
+mpirun mpirun_arg -np $1 ../exe/etafcst_all.x
+endif
+
+date

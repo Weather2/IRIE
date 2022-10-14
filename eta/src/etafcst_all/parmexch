@@ -1,0 +1,14 @@
+C     IBUFEXCH is the size of the exchange buffers used for the
+C     halo exchanges. The current size should be more than sufficient
+C     for the forseeable future.
+C
+C     IBUFEXCH would need to be increased if you ever receive an error 
+C     from the MPI library indicating that the recieive buffer is too small.
+C
+C     You should do a "make clean" if you increase IBUFEXCH.
+C
+C     Jim Tuccillo Feb 2001
+C 
+      INTEGER IBUFEXCH
+!mp      PARAMETER ( IBUFEXCH = 2500000 )    
+      PARAMETER ( IBUFEXCH = 350000 )    

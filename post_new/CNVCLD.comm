@@ -1,0 +1,5 @@
+C-----------------------------------------------------------------------
+                             C O M M O N /CNVCLD/
+     & CUPPT(IM,JM),CFRACL(IM,JM),CFRACM(IM,JM),CFRACH(IM,JM)
+     &,CFRACO(IM,JM),CFRACALL(IM,JM,LM),CFRACCON(IM,JM,LM)
+C-----------------------------------------------------------------------

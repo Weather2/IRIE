@@ -1,0 +1,8 @@
+C
+      CHARACTER*100      FN_SRZ,FN_FAO
+     &                  ,FN_TEXT4ETA,FN_TEXTETA,FN_SOIL
+     &                  ,FN_OWE,FN_VEG,FN_ALBEDO,FN_GFRAC
+      NAMELIST /SOIL_NL/ FN_SRZ,FN_FAO
+     &                  ,FN_TEXT4ETA,FN_TEXTETA,FN_SOIL
+     &                  ,FN_OWE,FN_VEG,FN_ALBEDO,FN_GFRAC
+C

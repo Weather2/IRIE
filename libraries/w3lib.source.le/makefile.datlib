@@ -1,0 +1,17 @@
+datlib:	w3lib90.a(iw3jdn.o)\
+	w3lib90.a(w3ctzdat.o)\
+	w3lib90.a(w3difdat.o)\
+	w3lib90.a(w3doxdat.o)\
+	w3lib90.a(w3fs26.o)\
+	w3lib90.a(w3locdat.o)\
+	w3lib90.a(w3movdat.o)\
+	w3lib90.a(w3pradat.o)\
+	w3lib90.a(w3prrdat.o)\
+	w3lib90.a(w3reddat.o)\
+	w3lib90.a(w3utcdat.o)\
+	w3lib90.a(w3valdat.o)
+.f.a:
+	f90 -c $<
+	ar -ru ../w3lib90 $*.o
+#	ar -ru $@ $*.o
+	rm -f $*.o

@@ -1,0 +1,5 @@
+#! /bin/csh -f
+
+./buildall >& eta_install.log &
+
+exit

@@ -1,0 +1,2063 @@
+81,82c81,82
+< C   95-03-20  M.BALDWIN   FI633 QUICK AN DIRTY FIX MODIFICATION TO GET
+< C                         DATA REP TYPE [KGDS(1)] 201 AND 202 TO WORK.
+---
+> C   95-03-20  M.BALDWIN   FI633 MODIFICATION TO GET
+> C                         DATA REP TYPES [KGDS(1)] 201 AND 202 TO WORK.
+84,87c84,87
+< C   95-04-26  R.E.JONES   FI636 CORECTION FOR 2ND ORDER COMPLEX 
+< C                         UNPACKING. 
+< C   95-05-19  R.E.JONES   ADDED GRID 215, 20 KM AWIPS GRID 
+< C   95-07-06  R.E.JONES   ADDED GAUSSIAN T62, T126 GRIDS 98, 126 
+---
+> C   95-04-26  R.E.JONES   FI636 CORECTION FOR 2ND ORDER COMPLEX
+> C                         UNPACKING. R
+> C   95-05-19  R.E.JONES   ADDED GRID 215, 20 KM AWIPS GRID
+> C   95-07-06  R.E.JONES   ADDED GAUSSIAN T62, T126 GRID 98, 126
+88a89
+> C   95-10-31  IREDELL     REMOVED SAVES AND PRINTS
+90c91,96
+< C   98-06-30  EBISUZAKI   LINUX PORT
+---
+> C   96-08-19  R.E.JONES   ADDED MERCATOR GRIDS 8 AND 53, AND GRID 196
+> C   97-02-12  W BOSTELMAN CORRECTS ECMWF US GRID 2 PROCESSING
+> C   98-06-17  IREDELL     REMOVED ALTERNATE RETURN IN FI637
+> C   98-08-31  IREDELL     ELIMINATED NEED FOR MXSIZE
+> C   98-09-02  Gilbert     Corrected error in map size for U.S. Grid 92
+> C   98-09-08  BALDWIN     ADD DATA REP TYPE [KGDS(1)] 203
+230c236
+< C     KPTR       - 20 WORD ARRAY CONTAINING STORAGE FOR FOLLOWING PARAMETERS
+---
+> C     KPTR       - ARRAY CONTAINING STORAGE FOR FOLLOWING PARAMETERS
+246,250d251
+< C         (16)   - RESERVED
+< C         (17)   - RESERVED
+< C         (18)   - RESERVED
+< C         (19)   - RESERVED
+< C         (20)   - RESERVED
+271a273,274
+> C   SUBPROGRAM CAN BE CALLED FROM A MULTIPROCESSING ENVIRONMENT.
+> C
+273,274c276
+< C   LANGUAGE: FORTRAN 77
+< C   MACHINE:  HDS9000
+---
+> C   LANGUAGE: FORTRAN 90
+429c431
+< C       LBMS(260000)    LOGICAL
+---
+> C       LBMS(*)    LOGICAL
+437c439
+< C       DATA(260000)    REAL*4
+---
+> C       DATA(*)    REAL*4
+442c444
+< C       KPTR(10)        INTEGER*4
+---
+> C       KPTR(10)       INTEGER*4
+550c552
+<       LOGICAL       KBMS(*)
+---
+>       LOGICAL*1     KBMS(*)
+563a566,567
+>       INTEGER       KKK,JSGN,JEXP,IFR,NPTS
+>       CHARACTER     KK(8)
+565,567c569
+< C
+<       INTEGER       JSGN,JEXP,IFR,NPTS
+< C
+---
+>       EQUIVALENCE   (KK(1),KKK)
+584,587d585
+<       SAVE
+< C 
+<       NSCL2    = 0
+<       ZREF     = 0
+594c592
+<       IF (KRET.NE.0) THEN
+---
+>       IF(KRET.NE.0) THEN
+602c600
+<       IF (KRET.NE.0) THEN
+---
+>       IF(KRET.NE.0) THEN
+609c607
+<       IF (AND(KPDS(4),128).NE.0) THEN
+---
+>       IF (IAND(KPDS(4),128).NE.0) THEN
+657c655,661
+< C             CALL GBYTE (MSGA,FVAL1,KPTR(9)+384,32)
+---
+> C             CALL GBYTE  (MSGA,FVAL1,KPTR(9)+384,32)
+> C
+> C         NOTE INTEGERS, CHARACTERS AND EQUIVALENCES
+> C         DEFINED ABOVE TO MAKE THIS KKK EXTRACTION
+> C         WORK AND LINE UP ON WORD BOUNDARIES
+> C
+>           CALL GBYTE (MSGA,KKK,KPTR(9)+384,32)
+662,664c666,678
+< 	call gbytec(MSGA,JSGN,KPTR(9)+384,1)
+< 	call gbytec(MSGA,JEXP,KPTR(9)+385,7)
+< 	call gbytec(MSGA,IFR,KPTR(9)+392,24)
+---
+> C       1ST TEST TO SEE IN ON 32 OR 64 BIT WORD MACHINE
+> C       LW = 4 OR 8; IF 8 MAY BE A CRAY
+> C
+>               CALL W3FI01(LW)
+>               IF (LW.EQ.4) THEN
+>                   CALL GBYTE (KK,JSGN,0,1)
+>                   CALL GBYTE (KK,JEXP,1,7)
+>                   CALL GBYTE (KK,IFR,8,24)
+>               ELSE
+>                   CALL GBYTE (KK,JSGN,32,1)
+>                   CALL GBYTE (KK,JEXP,33,7)
+>                   CALL GBYTE (KK,IFR,40,24)
+>               ENDIF
+667a682,683
+>               ELSE IF (JEXP.EQ.0.AND.IFR.EQ.0) THEN
+>                   REALKK = 0.0
+673a690,694
+> C             CALL GBYTE  (MSGA,FDIFF1,KPTR(9)+416,32)
+> C          (REPLACED BY FOLLOWING EXTRACTION)
+> C
+>               CALL GBYTE (MSGA,KKK,KPTR(9)+416,32)
+> C
+677,679c698,710
+< 	call gbytec(MSGA,JSGN,KPTR(9)+416,1)
+< 	call gbytec(MSGA,JEXP,KPTR(9)+417,7)
+< 	call gbytec(MSGA,IFR,KPTR(9)+424,24)
+---
+> C       1ST TEST TO SEE IN ON 32 OR 64 BIT WORD MACHINE
+> C       LW = 4 OR 8; IF 8 MAY BE A CRAY
+> C
+>               CALL W3FI01(LW)
+>               IF (LW.EQ.4) THEN
+>                   CALL GBYTE (KK,JSGN,0,1)
+>                   CALL GBYTE (KK,JEXP,1,7)
+>                   CALL GBYTE (KK,IFR,8,24)
+>               ELSE
+>                   CALL GBYTE (KK,JSGN,32,1)
+>                   CALL GBYTE (KK,JEXP,33,7)
+>                   CALL GBYTE (KK,IFR,40,24)
+>               ENDIF
+682a714,715
+>               ELSE IF (JEXP.EQ.0.AND.IFR.EQ.0) THEN
+>                   REALKK = 0.0
+689,690c722,723
+<               CALL GBYTEC(MSGA,ISIGN,KPTR(9)+448,1)
+<               CALL GBYTEC(MSGA,ISCAL2,KPTR(9)+449,15)
+---
+>               CALL GBYTE  (MSGA,ISIGN,KPTR(9)+448,1)
+>               CALL GBYTE  (MSGA,ISCAL2,KPTR(9)+449,15)
+709c742
+<           PRINT *,'FI635 NOT PROGRAMMED FOR EDITION NR = ',KPDS(18)
+---
+> C         PRINT *,'FI635 NOT PROGRAMMED FOR EDITION NR',KPDS(18)
+727a761
+> C   95-10-31  IREDELL     REMOVED SAVES AND PRINTS
+775a810,811
+> C   SUBPROGRAM CAN BE CALLED FROM A MULTIPROCESSING ENVIRONMENT.
+> C
+792d827
+<       SAVE
+796c831
+<           CALL GBYTEC(MSGA,MGRIB,I,32)
+---
+>           CALL GBYTE (MSGA,MGRIB,I,32)
+809c844
+<       CALL GBYTEC(MSGA,ITOTAL,KPTR(8),24)
+---
+>       CALL GBYTE (MSGA,ITOTAL,KPTR(8),24)
+812c847
+<       CALL GBYTEC(MSGA,I7777,IPOINT,32)
+---
+>       CALL GBYTE (MSGA,I7777,IPOINT,32)
+820c855
+<           CALL GBYTEC(MSGA,KPDS(18),KPTR(8),8)
+---
+>           CALL GBYTE (MSGA,KPDS(18),KPTR(8),8)
+830c865
+<       CALL GBYTEC(MSGA,KPTR(3),KPTR(8),24)
+---
+>       CALL GBYTE (MSGA,KPTR(3),KPTR(8),24)
+833c868
+<       CALL GBYTEC(MSGA,KPDS(4),LOOK,8)
+---
+>       CALL GBYTE (MSGA,KPDS(4),LOOK,8)
+836c871
+<       IF (AND(KPDS(4),128).NE.0) THEN
+---
+>       IF (IAND(KPDS(4),128).NE.0) THEN
+838c873
+<           CALL GBYTEC(MSGA,KPTR(4),KPTR(8),24)
+---
+>           CALL GBYTE (MSGA,KPTR(4),KPTR(8),24)
+844c879
+<       IF (AND(KPDS(4),64).NE.0) THEN
+---
+>       IF (IAND(KPDS(4),64).NE.0) THEN
+846c881
+<           CALL GBYTEC(MSGA,KPTR(5),KPTR(8),24)
+---
+>           CALL GBYTE (MSGA,KPTR(5),KPTR(8),24)
+853c888
+<       CALL GBYTEC(MSGA,KPTR(6),KPTR(8),24)
+---
+>       CALL GBYTE (MSGA,KPTR(6),KPTR(8),24)
+859c894
+<       CALL GBYTEC(MSGA,K7777,KPTR(8),32)
+---
+>       CALL GBYTE (MSGA,K7777,KPTR(8),32)
+886a922
+> C   95-10-31  IREDELL     REMOVED SAVES AND PRINTS
+940a977,978
+> C   SUBPROGRAM CAN BE CALLED FROM A MULTIPROCESSING ENVIRONMENT.
+> C
+957,958d994
+<       SAVE
+<       KRET=0
+962c998
+<           CALL GBYTEC(MSGA,KPDS(19),KPTR(8),8)
+---
+>           CALL GBYTE (MSGA,KPDS(19),KPTR(8),8)
+965c1001
+<       CALL GBYTEC(MSGA,KPDS(1),KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KPDS(1),KPTR(8),8)
+969c1005
+<       CALL GBYTEC(MSGA,KPDS(2),KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KPDS(2),KPTR(8),8)
+973c1009
+<       CALL GBYTEC(MSGA,KPDS(3),KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KPDS(3),KPTR(8),8)
+977c1013
+< C     CALL GBYTEC(MSGA,KPDS(4),KPTR(8),8)
+---
+> C     CALL GBYTE (MSGA,KPDS(4),KPTR(8),8)
+981c1017
+<       CALL GBYTEC(MSGA,KPDS(5),KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KPDS(5),KPTR(8),8)
+985c1021
+<       CALL GBYTEC(MSGA,KPDS(6),KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KPDS(6),KPTR(8),8)
+989c1025
+<       CALL GBYTEC(MSGA,KPDS(7),KPTR(8),16)
+---
+>       CALL GBYTE (MSGA,KPDS(7),KPTR(8),16)
+993c1029
+<       CALL GBYTEC(MSGA,KPDS(8),KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KPDS(8),KPTR(8),8)
+997c1033
+<       CALL GBYTEC(MSGA,KPDS(9),KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KPDS(9),KPTR(8),8)
+1001c1037
+<       CALL GBYTEC(MSGA,KPDS(10),KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KPDS(10),KPTR(8),8)
+1005c1041
+<       CALL GBYTEC(MSGA,KPDS(11),KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KPDS(11),KPTR(8),8)
+1009c1045
+<       CALL GBYTEC(MSGA,KPDS(12),KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KPDS(12),KPTR(8),8)
+1013c1049
+<       CALL GBYTEC(MSGA,KPDS(13),KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KPDS(13),KPTR(8),8)
+1017c1053
+<       CALL GBYTEC(MSGA,KPDS(14),KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KPDS(14),KPTR(8),8)
+1021c1057
+<       CALL GBYTEC(MSGA,KPDS(15),KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KPDS(15),KPTR(8),8)
+1025c1061
+<       CALL GBYTEC(MSGA,KPDS(16),KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KPDS(16),KPTR(8),8)
+1037c1073
+<       CALL GBYTEC(MSGA,KPDS(17),KPTR(8),16)
+---
+>       CALL GBYTE (MSGA,KPDS(17),KPTR(8),16)
+1041c1077
+<       CALL GBYTEC(MSGA,KPDS(20),KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KPDS(20),KPTR(8),8)
+1045c1081
+<       CALL GBYTEC(MSGA,KPDS(21),KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KPDS(21),KPTR(8),8)
+1049c1085
+<           CALL GBYTEC(MSGA,KPDS(23),KPTR(8),8)
+---
+>           CALL GBYTE (MSGA,KPDS(23),KPTR(8),8)
+1054c1090
+<               CALL GBYTEC(MSGA,ISIGN,KPTR(8),1)
+---
+>               CALL GBYTE (MSGA,ISIGN,KPTR(8),1)
+1056c1092
+<               CALL GBYTEC(MSGA,IDEC,KPTR(8),15)
+---
+>               CALL GBYTE (MSGA,IDEC,KPTR(8),15)
+1059c1095
+<                 KPDS(22)  = - IDEC
+---
+>                   KPDS(22)  = - IDEC
+1061c1097
+<                 KPDS(22)  =   IDEC
+---
+>                   KPDS(22)  = IDEC
+1066c1102
+<                   CALL GBYTEC(MSGA,KPDS(24),KPTR(8)+8,8)
+---
+>                   CALL GBYTE (MSGA,KPDS(24),KPTR(8)+8,8)
+1068c1104
+<                   CALL GBYTEC(MSGA,KPDS(25),KPTR(8)+16,8)
+---
+>                   CALL GBYTE (MSGA,KPDS(25),KPTR(8)+16,8)
+1073c1109
+<                   CALL GBYTEC(MSGA,KPDS(24),KPTR(8)+8,8)
+---
+>                   CALL GBYTE (MSGA,KPDS(24),KPTR(8)+8,8)
+1075c1111
+<                   CALL GBYTEC(MSGA,KPDS(25),KPTR(8)+16,8)
+---
+>                   CALL GBYTE (MSGA,KPDS(25),KPTR(8)+16,8)
+1079,1081d1114
+< c		  system dependency!!
+< c		  not sure how to remove WNE
+< c		  current code seems well system dependent
+1087c1120
+<                   CALL GBYTESC(MSGA,KPDS(36),KPTR(8),MWDBIT,0,ITER)
+---
+>                   CALL GBYTES (MSGA,KPDS(36),KPTR(8),MWDBIT,0,ITER)
+1093,1094c1126,1127
+<       IF (AND(KPDS(4),128).NE.0) THEN
+<           IF (AND(KPDS(4),64).NE.0) THEN
+---
+>       IF (IAND(KPDS(4),128).NE.0) THEN
+>           IF (IAND(KPDS(4),64).NE.0) THEN
+1096c1129
+<                   IF (KPDS(3).GE.21.AND.KPDS(3).LE.26) THEN
+---
+>                   IF (KPDS(3).GE.21.AND.KPDS(3).LE.26)THEN
+1098c1131
+<                   ELSE IF (KPDS(3).GE.37.AND.KPDS(3).LE.44) THEN
+---
+>                   ELSE IF (KPDS(3).GE.37.AND.KPDS(3).LE.44)THEN
+1105a1139
+>                       ELSE IF (KPDS(3).EQ.8) THEN
+1107a1142
+>                       ELSE IF (KPDS(3).EQ.53) THEN
+1111a1147
+>                       ELSE IF (KPDS(3).EQ.196) THEN
+1114,1118c1150,1154
+<                           PRINT *,' HAVE ENCOUNTERED A NEW GRID FOR',
+<      *                    ' NMC WITHOUT A GRID DESCRIPTION SECTION'
+<                           PRINT *,' PLEASE NOTIFY AUTOMATION DIVISION'
+<                           PRINT *,' PRODUCTION MANAGEMENT BRANCH'
+<                           PRINT *,' W/NMC42)'
+---
+> C                         PRINT *,' HAVE ENCOUNTERED A NEW GRID FOR',
+> C    *                    ' NMC WITHOUT A GRID DESCRIPTION SECTION'
+> C                         PRINT *,' PLEASE NOTIFY AUTOMATION DIVISION'
+> C                         PRINT *,' PRODUCTION MANAGEMENT BRANCH'
+> C                         PRINT *,' W/NMC42)'
+1123,1127c1159,1163
+<                           PRINT *,' HAVE ENCOUNTERED A NEW GRID FOR',
+<      *                    ' ECMWF WITHOUT A GRID DESCRIPTION SECTION'
+<                           PRINT *,' PLEASE NOTIFY AUTOMATION DIVISION'
+<                           PRINT *,' PRODUCTION MANAGEMENT BRANCH'
+<                           PRINT *,' W/NMC42)'
+---
+> C                         PRINT *,' HAVE ENCOUNTERED A NEW GRID FOR',
+> C    *                    ' ECMWF WITHOUT A GRID DESCRIPTION SECTION'
+> C                         PRINT *,' PLEASE NOTIFY AUTOMATION DIVISION'
+> C                         PRINT *,' PRODUCTION MANAGEMENT BRANCH'
+> C                         PRINT *,' W/NMC42)'
+1135,1140c1171,1176
+<                           PRINT *,' HAVE ENCOUNTERED A NEW GRID FOR',
+<      *                            ' U.K. MET OFFICE, BRACKNELL',
+<      *                            ' WITHOUT A GRID DESCRIPTION SECTION'
+<                           PRINT *,' PLEASE NOTIFY AUTOMATION DIVISION'
+<                           PRINT *,' PRODUCTION MANAGEMENT BRANCH'
+<                           PRINT *,' W/NMC42)'
+---
+> C                         PRINT *,' HAVE ENCOUNTERED A NEW GRID FOR',
+> C    *                            ' U.K. MET OFFICE, BRACKNELL',
+> C    *                            ' WITHOUT A GRID DESCRIPTION SECTION'
+> C                         PRINT *,' PLEASE NOTIFY AUTOMATION DIVISION'
+> C                         PRINT *,' PRODUCTION MANAGEMENT BRANCH'
+> C                         PRINT *,' W/NMC42)'
+1145,1149c1181,1185
+<                           PRINT *,' HAVE ENCOUNTERED A NEW GRID FOR',
+<      *                      ' FNOC WITHOUT A GRID DESCRIPTION SECTION'
+<                           PRINT *,' PLEASE NOTIFY AUTOMATION DIVISION'
+<                           PRINT *,' PRODUCTION MANAGEMENT BRANCH'
+<                           PRINT *,' W/NMC42)'
+---
+> C                         PRINT *,' HAVE ENCOUNTERED A NEW GRID FOR',
+> C    *                      ' FNOC WITHOUT A GRID DESCRIPTION SECTION'
+> C                         PRINT *,' PLEASE NOTIFY AUTOMATION DIVISION'
+> C                         PRINT *,' PRODUCTION MANAGEMENT BRANCH'
+> C                         PRINT *,' W/NMC42)'
+1168,1169c1204,1208
+< C   95-03-20  M.BALDWIN   FI633 QUICK AN DIRTY FIX MODIFICATION TO GET
+< C                         DATA REP TYPE [KGDS(1)] 201 AND 202 TO WORK. 
+---
+> C   95-03-20  M.BALDWIN   FI633 MODIFICATION TO GET
+> C                         DATA REP TYPES [KGDS(1)] 201 AND 202 TO WORK.
+> C   95-10-31  IREDELL     REMOVED SAVES AND PRINTS
+> C   98-09-08  BALDWIN     ADD DATA REP TYPE [KGDS(1)] 203
+> C                        
+1276a1316,1317
+> C   SUBPROGRAM CAN BE CALLED FROM A MULTIPROCESSING ENVIRONMENT.
+> C
+1293d1333
+<       SAVE
+1301c1341
+<       CALL GBYTEC(MSGA,KGDS(19),KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KGDS(19),KPTR(8),8)
+1305c1345
+<       CALL GBYTEC(MSGA,KGDS(20),KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KGDS(20),KPTR(8),8)
+1309c1349
+<       CALL GBYTEC(MSGA,KGDS(1),KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KGDS(1),KPTR(8),8)
+1353a1394,1395
+> C  ------------------- ARAKAWA STAGGERED, SEMI-STAGGERED, OR FILLED
+> C                          ROTATED LAT/LON GRIDS
+1357c1399
+<       CALL GBYTEC(MSGA,KGDS(2),KPTR(8),16)
+---
+>       CALL GBYTE (MSGA,KGDS(2),KPTR(8),16)
+1360c1402
+<       CALL GBYTEC(MSGA,KGDS(3),KPTR(8),16)
+---
+>       CALL GBYTE (MSGA,KGDS(3),KPTR(8),16)
+1363c1405
+<       CALL GBYTEC(MSGA,KGDS(4),KPTR(8),24)
+---
+>       CALL GBYTE (MSGA,KGDS(4),KPTR(8),24)
+1365,1366c1407,1408
+<       IF (AND(KGDS(4),8388608).NE.0) THEN
+<           KGDS(4)  =  AND(KGDS(4),8388607) * (-1)
+---
+>       IF (IAND(KGDS(4),8388608).NE.0) THEN
+>           KGDS(4)  =  IAND(KGDS(4),8388607) * (-1)
+1369c1411
+<       CALL GBYTEC(MSGA,KGDS(5),KPTR(8),24)
+---
+>       CALL GBYTE (MSGA,KGDS(5),KPTR(8),24)
+1371,1372c1413,1414
+<       IF (AND(KGDS(5),8388608).NE.0) THEN
+<           KGDS(5)  =  - AND(KGDS(5),8388607)
+---
+>       IF (IAND(KGDS(5),8388608).NE.0) THEN
+>           KGDS(5)  =  - IAND(KGDS(5),8388607)
+1375c1417
+<       CALL GBYTEC(MSGA,KGDS(6),KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KGDS(6),KPTR(8),8)
+1378c1420
+<       CALL GBYTEC(MSGA,KGDS(7),KPTR(8),24)
+---
+>       CALL GBYTE (MSGA,KGDS(7),KPTR(8),24)
+1380,1381c1422,1423
+<       IF (AND(KGDS(7),8388608).NE.0) THEN
+<           KGDS(7)  =  - AND(KGDS(7),8388607)
+---
+>       IF (IAND(KGDS(7),8388608).NE.0) THEN
+>           KGDS(7)  =  - IAND(KGDS(7),8388607)
+1384c1426
+<       CALL GBYTEC(MSGA,KGDS(8),KPTR(8),24)
+---
+>       CALL GBYTE (MSGA,KGDS(8),KPTR(8),24)
+1386,1387c1428,1429
+<       IF (AND(KGDS(8),8388608).NE.0) THEN
+<           KGDS(8)  =  - AND(KGDS(8),8388607)
+---
+>       IF (IAND(KGDS(8),8388608).NE.0) THEN
+>           KGDS(8)  =  - IAND(KGDS(8),8388607)
+1390c1432
+<       CALL GBYTEC(MSGA,KGDS(9),KPTR(8),16)
+---
+>       CALL GBYTE (MSGA,KGDS(9),KPTR(8),16)
+1397c1439
+<       CALL GBYTEC(MSGA,KGDS(10),KPTR(8),16)
+---
+>       CALL GBYTE (MSGA,KGDS(10),KPTR(8),16)
+1400c1442
+<       CALL GBYTEC(MSGA,KGDS(11),KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KGDS(11),KPTR(8),8)
+1404c1446
+<       CALL GBYTEC(MSGA,KGDS(12),KPTR(8),32)
+---
+>       CALL GBYTE (MSGA,KGDS(12),KPTR(8),32)
+1413c1455
+<       CALL GBYTEC(MSGA,KGDS(2),KPTR(8),16)
+---
+>       CALL GBYTE (MSGA,KGDS(2),KPTR(8),16)
+1416c1458
+<       CALL GBYTEC(MSGA,KGDS(3),KPTR(8),16)
+---
+>       CALL GBYTE (MSGA,KGDS(3),KPTR(8),16)
+1419c1461
+<       CALL GBYTEC(MSGA,KGDS(4),KPTR(8),24)
+---
+>       CALL GBYTE (MSGA,KGDS(4),KPTR(8),24)
+1421,1422c1463,1464
+<       IF (AND(KGDS(4),8388608).NE.0) THEN
+<           KGDS(4)  =  - AND(KGDS(4),8388607)
+---
+>       IF (IAND(KGDS(4),8388608).NE.0) THEN
+>           KGDS(4)  =  - IAND(KGDS(4),8388607)
+1425c1467
+<       CALL GBYTEC(MSGA,KGDS(5),KPTR(8),24)
+---
+>       CALL GBYTE (MSGA,KGDS(5),KPTR(8),24)
+1427,1428c1469,1470
+<       IF (AND(KGDS(5),8388608).NE.0) THEN
+<           KGDS(5)  =   - AND(KGDS(5),8388607)
+---
+>       IF (IAND(KGDS(5),8388608).NE.0) THEN
+>           KGDS(5)  =   - IAND(KGDS(5),8388607)
+1431c1473
+<       CALL GBYTEC(MSGA,KGDS(6),KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KGDS(6),KPTR(8),8)
+1434c1476
+<       CALL GBYTEC(MSGA,KGDS(7),KPTR(8),24)
+---
+>       CALL GBYTE (MSGA,KGDS(7),KPTR(8),24)
+1436,1437c1478,1479
+<       IF (AND(KGDS(7),8388608).NE.0) THEN
+<           KGDS(7)  =  - AND(KGDS(7),8388607)
+---
+>       IF (IAND(KGDS(7),8388608).NE.0) THEN
+>           KGDS(7)  =  - IAND(KGDS(7),8388607)
+1440c1482
+<       CALL GBYTEC(MSGA,KGDS(8),KPTR(8),24)
+---
+>       CALL GBYTE (MSGA,KGDS(8),KPTR(8),24)
+1442,1443c1484,1485
+<       IF (AND(KGDS(8),8388608).NE.0) THEN
+<           KGDS(8)  =  - AND(KGDS(8),8388607)
+---
+>       IF (IAND(KGDS(8),8388608).NE.0) THEN
+>           KGDS(8)  =  - IAND(KGDS(8),8388607)
+1446c1488
+<       CALL GBYTEC(MSGA,KGDS(9),KPTR(8),24)
+---
+>       CALL GBYTE (MSGA,KGDS(9),KPTR(8),24)
+1448,1449c1490,1491
+<       IF (AND(KGDS(9),8388608).NE.0) THEN
+<           KGDS(9)  =  - AND(KGDS(9),8388607)
+---
+>       IF (IAND(KGDS(9),8388608).NE.0) THEN
+>           KGDS(9)  =  - IAND(KGDS(9),8388607)
+1452c1494
+<       CALL GBYTEC(MSGA,KGDS(10),KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KGDS(10),KPTR(8),8)
+1455c1497
+<       CALL GBYTEC(MSGA,KGDS(11),KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KGDS(11),KPTR(8),8)
+1459c1501
+<       CALL GBYTEC(MSGA,KGDS(12),KPTR(8),32)
+---
+>       CALL GBYTE (MSGA,KGDS(12),KPTR(8),32)
+1470c1512
+<       CALL GBYTEC(MSGA,KGDS(2),KPTR(8),16)
+---
+>       CALL GBYTE (MSGA,KGDS(2),KPTR(8),16)
+1473c1515
+<       CALL GBYTEC(MSGA,KGDS(3),KPTR(8),16)
+---
+>       CALL GBYTE (MSGA,KGDS(3),KPTR(8),16)
+1476c1518
+<       CALL GBYTEC(MSGA,KGDS(4),KPTR(8),16)
+---
+>       CALL GBYTE (MSGA,KGDS(4),KPTR(8),16)
+1479c1521
+<       CALL GBYTEC(MSGA,KGDS(5),KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KGDS(5),KPTR(8),8)
+1482c1524
+<       CALL GBYTEC(MSGA,KGDS(6),KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KGDS(6),KPTR(8),8)
+1493c1535
+<       CALL GBYTEC(MSGA,KGDS(2),KPTR(8),16)
+---
+>       CALL GBYTE (MSGA,KGDS(2),KPTR(8),16)
+1496c1538
+<       CALL GBYTEC(MSGA,KGDS(3),KPTR(8),16)
+---
+>       CALL GBYTE (MSGA,KGDS(3),KPTR(8),16)
+1499c1541
+<       CALL GBYTEC(MSGA,KGDS(4),KPTR(8),24)
+---
+>       CALL GBYTE (MSGA,KGDS(4),KPTR(8),24)
+1501,1502c1543,1544
+<       IF (AND(KGDS(4),8388608).NE.0) THEN
+<           KGDS(4)  =  - AND(KGDS(4),8388607)
+---
+>       IF (IAND(KGDS(4),8388608).NE.0) THEN
+>           KGDS(4)  =  - IAND(KGDS(4),8388607)
+1505c1547
+<       CALL GBYTEC(MSGA,KGDS(5),KPTR(8),24)
+---
+>       CALL GBYTE (MSGA,KGDS(5),KPTR(8),24)
+1507,1508c1549,1550
+<       IF (AND(KGDS(5),8388608).NE.0) THEN
+<           KGDS(5)  =  - AND(KGDS(5),8388607)
+---
+>       IF (IAND(KGDS(5),8388608).NE.0) THEN
+>           KGDS(5)  =  - IAND(KGDS(5),8388607)
+1511c1553
+<       CALL GBYTEC(MSGA,KGDS(6),KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KGDS(6),KPTR(8),8)
+1514c1556
+<       CALL GBYTEC(MSGA,KGDS(7),KPTR(8),24)
+---
+>       CALL GBYTE (MSGA,KGDS(7),KPTR(8),24)
+1516,1517c1558,1559
+<       IF (AND(KGDS(7),8388608).NE.0) THEN
+<           KGDS(7)  =  - AND(KGDS(7),8388607)
+---
+>       IF (IAND(KGDS(7),8388608).NE.0) THEN
+>           KGDS(7)  =  - IAND(KGDS(7),8388607)
+1520c1562
+<       CALL GBYTEC(MSGA,KGDS(8),KPTR(8),24)
+---
+>       CALL GBYTE (MSGA,KGDS(8),KPTR(8),24)
+1522,1523c1564,1565
+<       IF (AND(KGDS(8),8388608).NE.0) THEN
+<           KGDS(8)  =  - AND(KGDS(8),8388607)
+---
+>       IF (IAND(KGDS(8),8388608).NE.0) THEN
+>           KGDS(8)  =  - IAND(KGDS(8),8388607)
+1526c1568
+<       CALL GBYTEC(MSGA,KGDS(9),KPTR(8),24)
+---
+>       CALL GBYTE (MSGA,KGDS(9),KPTR(8),24)
+1528,1529c1570,1571
+<       IF (AND(KGDS(9),8388608).NE.0) THEN
+<           KGDS(9)  =  - AND(KGDS(9),8388607)
+---
+>       IF (IAND(KGDS(9),8388608).NE.0) THEN
+>           KGDS(9)  =  - IAND(KGDS(9),8388607)
+1532c1574
+<       CALL GBYTEC(MSGA,KGDS(10),KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KGDS(10),KPTR(8),8)
+1535c1577
+<       CALL GBYTEC(MSGA,KGDS(11),KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KGDS(11),KPTR(8),8)
+1538c1580
+<       CALL GBYTEC(MSGA,KGDS(12),KPTR(8),24)
+---
+>       CALL GBYTE (MSGA,KGDS(12),KPTR(8),24)
+1540,1541c1582,1583
+<       IF (AND(KGDS(12),8388608).NE.0) THEN
+<           KGDS(12)  =  - AND(KGDS(12),8388607)
+---
+>       IF (IAND(KGDS(12),8388608).NE.0) THEN
+>           KGDS(12)  =  - IAND(KGDS(12),8388607)
+1544c1586
+<       CALL GBYTEC(MSGA,KGDS(13),KPTR(8),24)
+---
+>       CALL GBYTE (MSGA,KGDS(13),KPTR(8),24)
+1546,1547c1588,1589
+<       IF (AND(KGDS(13),8388608).NE.0) THEN
+<           KGDS(13)  =  - AND(KGDS(13),8388607)
+---
+>       IF (IAND(KGDS(13),8388608).NE.0) THEN
+>           KGDS(13)  =  - IAND(KGDS(13),8388607)
+1559c1601
+<       CALL GBYTEC(MSGA,KGDS(2),KPTR(8),16)
+---
+>       CALL GBYTE (MSGA,KGDS(2),KPTR(8),16)
+1562c1604
+<       CALL GBYTEC(MSGA,KGDS(3),KPTR(8),16)
+---
+>       CALL GBYTE (MSGA,KGDS(3),KPTR(8),16)
+1565c1607
+<       CALL GBYTEC(MSGA,KGDS(4),KPTR(8),24)
+---
+>       CALL GBYTE (MSGA,KGDS(4),KPTR(8),24)
+1567,1568c1609,1610
+<       IF (AND(KGDS(4),8388608).NE.0) THEN
+<           KGDS(4)  =  - AND(KGDS(4),8388607)
+---
+>       IF (IAND(KGDS(4),8388608).NE.0) THEN
+>           KGDS(4)  =  - IAND(KGDS(4),8388607)
+1571c1613
+<       CALL GBYTEC(MSGA,KGDS(5),KPTR(8),24)
+---
+>       CALL GBYTE (MSGA,KGDS(5),KPTR(8),24)
+1573,1574c1615,1616
+<       IF (AND(KGDS(5),8388608).NE.0) THEN
+<           KGDS(5)  = - AND(KGDS(5),8388607)
+---
+>       IF (IAND(KGDS(5),8388608).NE.0) THEN
+>           KGDS(5)  = - IAND(KGDS(5),8388607)
+1577c1619
+<       CALL GBYTEC(MSGA,KGDS(6),KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KGDS(6),KPTR(8),8)
+1580c1622
+<       CALL GBYTEC(MSGA,KGDS(7),KPTR(8),24)
+---
+>       CALL GBYTE (MSGA,KGDS(7),KPTR(8),24)
+1582,1583c1624,1625
+<       IF (AND(KGDS(7),8388608).NE.0) THEN
+<           KGDS(7)  = - AND(KGDS(7),8388607)
+---
+>       IF (IAND(KGDS(7),8388608).NE.0) THEN
+>           KGDS(7)  = - IAND(KGDS(7),8388607)
+1586c1628
+<       CALL GBYTEC(MSGA,KGDS(8),KPTR(8),24)
+---
+>       CALL GBYTE (MSGA,KGDS(8),KPTR(8),24)
+1589c1631
+<       CALL GBYTEC(MSGA,KGDS(9),KPTR(8),24)
+---
+>       CALL GBYTE (MSGA,KGDS(9),KPTR(8),24)
+1592c1634
+<       CALL GBYTEC(MSGA,KGDS(10),KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KGDS(10),KPTR(8),8)
+1595c1637
+<       CALL GBYTEC(MSGA,KGDS(11),KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KGDS(11),KPTR(8),8)
+1598c1640
+<       CALL GBYTEC(MSGA,KGDS(12),KPTR(8),24)
+---
+>       CALL GBYTE (MSGA,KGDS(12),KPTR(8),24)
+1600,1601c1642,1643
+<       IF (AND(KGDS(12),8388608).NE.0) THEN
+<           KGDS(12)  =  - AND(KGDS(12),8388607)
+---
+>       IF (IAND(KGDS(12),8388608).NE.0) THEN
+>           KGDS(12)  =  - IAND(KGDS(12),8388607)
+1604c1646
+<       CALL GBYTEC(MSGA,KGDS(13),KPTR(8),24)
+---
+>       CALL GBYTE (MSGA,KGDS(13),KPTR(8),24)
+1606,1607c1648,1649
+<       IF (AND(KGDS(13),8388608).NE.0) THEN
+<           KGDS(13)  =  - AND(KGDS(13),8388607)
+---
+>       IF (IAND(KGDS(13),8388608).NE.0) THEN
+>           KGDS(13)  =  - IAND(KGDS(13),8388607)
+1610c1652
+<       CALL GBYTEC(MSGA,KGDS(14),KPTR(8),24)
+---
+>       CALL GBYTE (MSGA,KGDS(14),KPTR(8),24)
+1612,1613c1654,1655
+<       IF (AND(KGDS(14),8388608).NE.0) THEN
+<           KGDS(14)  =  - AND(KGDS(14),8388607)
+---
+>       IF (IAND(KGDS(14),8388608).NE.0) THEN
+>           KGDS(14)  =  - IAND(KGDS(14),8388607)
+1616c1658
+<       CALL GBYTEC(MSGA,KGDS(15),KPTR(8),24)
+---
+>       CALL GBYTE (MSGA,KGDS(15),KPTR(8),24)
+1618,1619c1660,1661
+<       IF (AND(KGDS(15),8388608).NE.0) THEN
+<           KGDS(15)  =  - AND(KGDS(15),8388607)
+---
+>       IF (IAND(KGDS(15),8388608).NE.0) THEN
+>           KGDS(15)  =  - IAND(KGDS(15),8388607)
+1622c1664
+<       CALL GBYTEC(MSGA,KGDS(16),KPTR(8),16)
+---
+>       CALL GBYTE (MSGA,KGDS(16),KPTR(8),16)
+1633c1675
+<           CALL GBYTESC(MSGA,KGDS(22),KPTR(8),16,0,KGDS(3))
+---
+>           CALL GBYTES (MSGA,KGDS(22),KPTR(8),16,0,KGDS(3))
+1653a1696,1700
+> C   95-10-31  IREDELL     REMOVED SAVES AND PRINTS
+> C   97-02-12  W BOSTELMAN CORRECTS ECMWF US GRID 2 PROCESSING
+> C   97-09-19  IREDELL     VECTORIZED BITMAP DECODER
+> C   98-09-02  Gilbert     Corrected error in map size for U.S. Grid 92
+> C   98-09-08  BALDWIN    ADD GRIDS 190,192
+1705a1753,1754
+> C   SUBPROGRAM CAN BE CALLED FROM A MULTIPROCESSING ENVIRONMENT.
+> C
+1716c1765
+<       LOGICAL       KBMS(*)
+---
+>       LOGICAL*1     KBMS(*)
+1724a1774
+>       INTEGER       MASK(8)
+1726c1776
+<       LOGICAL       GRD21( 1369)
+---
+>       LOGICAL*1     GRD21( 1369)
+1728,1730c1778,1780
+<       LOGICAL       GRD23( 1369)
+<       LOGICAL       GRD25( 1368)
+<       LOGICAL       GRD26( 1368)
+---
+>       LOGICAL*1     GRD23( 1369)
+>       LOGICAL*1     GRD25( 1368)
+>       LOGICAL*1     GRD26( 1368)
+1734c1784
+<       LOGICAL       GRD50( 1188)
+---
+>       LOGICAL*1     GRD50( 1188)
+1736c1786
+<       LOGICAL       GRD61( 4186)
+---
+>       LOGICAL*1     GRD61( 4186)
+1738,1739c1788,1789
+<       LOGICAL       GRD63( 4186)
+< C     LOGICAL       GRD70(16380)/16380*.TRUE./
+---
+>       LOGICAL*1     GRD63( 4186)
+> C     LOGICAL*1     GRD70(16380)/16380*.TRUE./
+1741d1790
+<       SAVE
+1771a1821
+>       DATA  MASK  /128,64,32,16,8,4,2,1/
+1774c1824
+<       IF (AND(KPDS(4),64).EQ.64) THEN
+---
+>       IF (IAND(KPDS(4),64).EQ.64) THEN
+1782c1832
+<       CALL GBYTEC(MSGA,KPTR(11),KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KPTR(11),KPTR(8),8)
+1787c1837
+<       CALL GBYTEC(MSGA,KPTR(12),KPTR(8),16)
+---
+>       CALL GBYTE (MSGA,KPTR(12),KPTR(8),16)
+1797,1805c1847
+<               DO 2122 I = 1, IBITS
+<                   CALL GBYTEC(MSGA,ICHK,KPTR(8),1)
+<                   KPTR(8)   = KPTR(8) + 1
+<                   IF (ICHK.NE.0) THEN
+<                       KBMS(I)   = .TRUE.
+<                   ELSE
+<                       KBMS(I)   = .FALSE.
+<                   END IF
+<  2122         CONTINUE
+---
+>               CALL FI634X(IBITS,KPTR(8),MSGA,KBMS)
+1820a1863
+>               CALL FI634X(IBITS,KPTR(8),MSGA,KBMS)
+1831,1839d1873
+<               DO 2324 I = 1, IBITS
+<                   CALL GBYTEC(MSGA,ICHK,KPTR(8),1)
+<                   KPTR(8)   = KPTR(8) + 1
+<                   IF (ICHK.NE.0) THEN
+<                       KBMS(I)   = .TRUE.
+<                   ELSE
+<                       KBMS(I)   = .FALSE.
+<                   END IF
+<  2324         CONTINUE
+1852,1861c1886,1888
+<                       DO 52 K = 1, KIN
+<                           CALL GBYTEC(MSGA,ICHK,KPTR(8),1)
+<                           KPTR(8)   = KPTR(8) + 1
+<                           KBITS     = KBITS + 1
+<                           IF (ICHK.NE.0) THEN
+<                               KBMS(KBITS)  = .TRUE.
+<                           ELSE
+<                               KBMS(KBITS)  = .FALSE.
+<                           END IF
+<    52                 CONTINUE
+---
+>                       CALL FI634X(KIN,KPTR(8),MSGA,KBMS(KBITS+1))
+>                       KPTR(8)=KPTR(8)+KIN
+>                       KBITS=KBITS+KIN
+1871,1880c1898,1900
+<                   DO 56 J = 1, KIN
+<                       CALL GBYTEC(MSGA,ICHK,KPTR(8),1)
+<                       KPTR(8)  = KPTR(8) + 1
+<                       KBITS    = KBITS + 1
+<                       IF (ICHK.NE.0) THEN
+<                           KBMS(KBITS)  = .TRUE.
+<                       ELSE
+<                           KBMS(KBITS)  = .FALSE.
+<                       END IF
+<    56             CONTINUE
+---
+>                   CALL FI634X(KIN,KPTR(8),MSGA,KBMS(KBITS+1))
+>                   KPTR(8)=KPTR(8)+KIN
+>                   KBITS=KBITS+KIN
+1884,1892c1904
+<               DO 100 I = 1, IBITS
+<                   CALL GBYTEC(MSGA,ICHK,KPTR(8),1)
+<                   KPTR(8)  = KPTR(8) + 1
+<                   IF (ICHK.NE.0) THEN
+<                       KBMS(I) = .TRUE.
+<                   ELSE
+<                       KBMS(I) = .FALSE.
+<                   END IF
+<   100         CONTINUE
+---
+>               CALL FI634X(IBITS,KPTR(8),MSGA,KBMS)
+1896c1908
+<           PRINT *,'FI634-NO PREDEFINED BIT MAP PROVIDED BY THIS CENTER'
+---
+> C         PRINT *,'FI634-NO PREDEFINED BIT MAP PROVIDED BY THIS CENTER'
+1907c1919
+<           PRINT *,'NON STANDARD GRID, CENTER = ',KPDS(1)
+---
+> C         PRINT *,'NON STANDARD GRID, CENTER = ',KPDS(1)
+1922c1934,1935
+<           CALL FI637(*820,J,KPDS,KGDS,KRET)
+---
+>           CALL FI637(J,KPDS,KGDS,KRET)
+>           IF(KRET.NE.0) GO TO 820
+1931c1944,1945
+<           CALL FI637(*820,J,KPDS,KGDS,KRET)
+---
+>           CALL FI637(J,KPDS,KGDS,KRET)
+>           IF(KRET.NE.0) GO TO 820
+1940c1954,1955
+<           CALL FI637(*820,J,KPDS,KGDS,KRET)
+---
+>           CALL FI637(J,KPDS,KGDS,KRET)
+>           IF(KRET.NE.0) GO TO 820
+1949c1964,1965
+<           CALL FI637(*820,J,KPDS,KGDS,KRET)
+---
+>           CALL FI637(J,KPDS,KGDS,KRET)
+>           IF(KRET.NE.0) GO TO 820
+1962c1978,1979
+<           CALL FI637(*890,J,KPDS,KGDS,KRET)
+---
+>           CALL FI637(J,KPDS,KGDS,KRET)
+>           IF(KRET.NE.0) GO TO 890
+1971c1988,1989
+<           CALL FI637(*820,J,KPDS,KGDS,KRET)
+---
+>           CALL FI637(J,KPDS,KGDS,KRET)
+>           IF(KRET.NE.0) GO TO 820
+1980c1998,1999
+<           CALL FI637(*820,J,KPDS,KGDS,KRET)
+---
+>           CALL FI637(J,KPDS,KGDS,KRET)
+>           IF(KRET.NE.0) GO TO 820
+2015a2035,2038
+>               ELSE IF (KPDS(3).EQ.8) THEN
+> C                       ----- U.S. GRID 8 - MAP SIZE 5104
+>                   J   = 5104
+>                   GO TO 800
+2035a2059,2062
+>               ELSE IF (KPDS(3).EQ.53) THEN
+> C                  ----- U.S.  GRID  53    - MAP SIZE 5967
+>                   J   = 5967
+>                   GO TO 800
+2077,2078c2104,2105
+< C                       ----- U.S GRID 92     - MAP SIZE 24162
+<                   J     = 24162
+---
+> C                       ----- U.S GRID 92     - MAP SIZE 81213
+>                   J     = 81213
+2138c2165,2177
+<               ELSE IF (AND(KPDS(4),128).EQ.128) THEN
+---
+>               ELSE IF (KPDS(3).EQ.190) THEN
+> C                       ----- U.S GRID 190  - MAP SIZE 12972
+>                   J     = 12972
+>                   GO TO 800
+>               ELSE IF (KPDS(3).EQ.192) THEN
+> C                       ----- U.S GRID 192  - MAP SIZE 81395
+>                   J     = 81395
+>                   GO TO 800
+>               ELSE IF (KPDS(3).EQ.196) THEN
+> C                 ----- U.S. GRID 196 - MAP SIZE 45903
+>                   J     = 45903
+>                   GO TO 800
+>               ELSE IF (IAND(KPDS(4),128).EQ.128) THEN
+2188c2227
+<               ELSE IF (AND(KPDS(4),128).EQ.128) THEN
+---
+>               ELSE IF (IAND(KPDS(4),128).EQ.128) THEN
+2199,2201c2238,2240
+<           IF (AND(KPDS(4),128).EQ.128) THEN
+<               PRINT *,'JMA MAP IS NOT PREDEFINED, THE GDS WILL'
+<               PRINT *,'BE USED TO UNPACK THE DATA, MAP = ',KPDS(3)
+---
+>           IF (IAND(KPDS(4),128).EQ.128) THEN
+> C             PRINT *,'JMA MAP IS NOT PREDEFINED, THE GDS WILL'
+> C             PRINT *,'BE USED TO UNPACK THE DATA, MAP = ',KPDS(3)
+2209,2211c2248,2250
+<           IF (AND(KPDS(4),128).EQ.128) THEN
+<               PRINT *,'CANADIAN MAP IS NOT PREDEFINED, THE GDS WILL'
+<               PRINT *,'BE USED TO UNPACK THE DATA, MAP = ',KPDS(3)
+---
+>           IF (IAND(KPDS(4),128).EQ.128) THEN
+> C             PRINT *,'CANADIAN MAP IS NOT PREDEFINED, THE GDS WILL'
+> C             PRINT *,'BE USED TO UNPACK THE DATA, MAP = ',KPDS(3)
+2237,2239c2276,2278
+<           IF (AND(KPDS(4),128).EQ.128) THEN
+<               PRINT *,'FNOC MAP IS NOT PREDEFINED, THE GDS WILL'
+<               PRINT *,'BE USED TO UNPACK THE DATA, MAP = ',KPDS(3)
+---
+>           IF (IAND(KPDS(4),128).EQ.128) THEN
+> C             PRINT *,'FNOC MAP IS NOT PREDEFINED, THE GDS WILL'
+> C             PRINT *,'BE USED TO UNPACK THE DATA, MAP = ',KPDS(3)
+2247c2286
+<           IF (AND(KPDS(4),128).EQ.128) THEN
+---
+>           IF (IAND(KPDS(4),128).EQ.128) THEN
+2262c2301,2303
+<               CALL FI637(*810,J,KPDS,KGDS,KRET)
+---
+>               CALL FI637(J,KPDS,KGDS,KRET)
+>               IF(KRET.NE.0) GO TO 810
+>               KPTR(10)  = J  ! Reset For Modified J
+2270c2311,2312
+<               CALL FI637(*810,J,KPDS,KGDS,KRET)
+---
+>               CALL FI637(J,KPDS,KGDS,KRET)
+>               IF(KRET.NE.0) GO TO 810
+2275c2317
+<           ELSE IF (AND(KPDS(4),128).EQ.128) THEN
+---
+>           ELSE IF (IAND(KPDS(4),128).EQ.128) THEN
+2282,2285c2324,2327
+<           PRINT *,'CENTER ',KPDS(1),' IS NOT DEFINED'
+<           IF (AND(KPDS(4),128).EQ.128) THEN
+<               PRINT *,'GDS WILL BE USED TO UNPACK THE DATA',
+<      *                        ' MAP = ',KPDS(3)
+---
+> C         PRINT *,'CENTER ',KPDS(1),' IS NOT DEFINED'
+>           IF (IAND(KPDS(4),128).EQ.128) THEN
+> C             PRINT *,'GDS WILL BE USED TO UNPACK THE DATA',
+> C    *                        ' MAP = ',KPDS(3)
+2296c2338,2339
+<       CALL FI637 (*801,J,KPDS,KGDS,KRET)
+---
+>       CALL FI637 (J,KPDS,KGDS,KRET)
+>       IF(KRET.NE.0) GO TO 801
+2311c2354
+<       PRINT *,'ECMWF PREDEFINED MAP SIZE DOES NOT MATCH, I WILL USE'
+---
+> C     PRINT *,'ECMWF PREDEFINED MAP SIZE DOES NOT MATCH, I WILL USE'
+2315c2358
+<       PRINT *,'U.K. MET PREDEFINED MAP SIZE DOES NOT MATCH, I WILL USE'
+---
+> C     PRINT *,'U.K. MET PREDEFINED MAP SIZE DOES NOT MATCH, I WILL USE'
+2319c2362
+<       PRINT *,'PREDEFINED MAP SIZE DOES NOT MATCH, I WILL USE'
+---
+> C     PRINT *,'PREDEFINED MAP SIZE DOES NOT MATCH, I WILL USE'
+2321c2364
+<       PRINT *,'THE GDS TO UNPACK THE DATA, MAP TYPE = ',KPDS(3)
+---
+> C     PRINT *,'THE GDS TO UNPACK THE DATA, MAP TYPE = ',KPDS(3)
+2334a2378,2414
+> C-----------------------------------------------------------------------
+>       SUBROUTINE FI634X(NPTS,NSKP,MSGA,KBMS)
+> C$$$  SUBPROGRAM DOCUMENTATION  BLOCK
+> C                .      .    .                                       .
+> C SUBPROGRAM:    FI634X      EXTRACT BIT MAP
+> C   PRGMMR: IREDELL          ORG: W/NP23     DATE: 91-09-19
+> C
+> C ABSTRACT: EXTRACT THE PACKED BITMAP INTO A LOGICAL ARRAY.
+> C
+> C PROGRAM HISTORY LOG:
+> C   97-09-19  IREDELL     VECTORIZED BITMAP DECODER
+> C
+> C USAGE:    CALL FI634X(NPTS,NSKP,MSGA,KBMS)
+> C   INPUT ARGUMENT LIST:
+> C     NPTS       - INTEGER NUMBER OF POINTS IN THE BITMAP FIELD
+> C     NSKP       - INTEGER NUMBER OF BITS TO SKIP IN GRIB MESSAGE
+> C     MSGA       - CHARACTER*1 GRIB MESSAGE
+> C
+> C   OUTPUT ARGUMENT LIST:
+> C     KBMS       - LOGICAL*1 BITMAP
+> C
+> C REMARKS:
+> C   SUBPROGRAM CAN BE CALLED FROM A MULTIPROCESSING ENVIRONMENT.
+> C
+> C ATTRIBUTES:
+> C   LANGUAGE: FORTRAN 77
+> C   MACHINE:  CRAY
+> C
+> C$$$
+>       CHARACTER*1   MSGA(*)
+>       LOGICAL*1     KBMS(NPTS)
+>       INTEGER       ICHK(NPTS)
+> C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+>       CALL GBYTES(MSGA,ICHK,NSKP,1,0,NPTS)
+>       KBMS=ICHK.NE.0
+> C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+>       END
+2350a2431,2432
+> C   95-10-31  IREDELL    REMOVED SAVES AND PRINTS
+> C   98-08-31  IREDELL    ELIMINATED NEED FOR MXSIZE
+2371,2375d2452
+< C         (16)   - RESERVED
+< C         (17)   - RESERVED
+< C         (18)   - RESERVED
+< C         (19)   - RESERVED
+< C         (20)   - RESERVED
+2408,2409c2485,2486
+< C     KPTR       - 20 WORD ARRAY CONTAINING STORAGE FOR FOLLOWING
+< C                  PARAMETERS. SEE INPUT LIST
+---
+> C     KPTR       - ARRAY CONTAINING STORAGE FOR FOLLOWING PARAMETERS
+> C                  SEE INPUT LIST
+2417a2495,2496
+> C   SUBPROGRAM CAN BE CALLED FROM A MULTIPROCESSING ENVIRONMENT.
+> C
+2423,2431d2501
+< C  *************************************************************
+< C       ON A PC THIS CAN BE CHANGED TO A SMALLER SIZE TO BETTER FIT
+< C       THE DOS MEMORY LIMIT OF 640K BYTES.  YOU COULD DO THIS
+< C       FOR MICROSOFT 5.0.  A PC 32 BIT FORTRAN COMPILER
+< C       WOULD NOT NEED THIS CHANGE.  IF NONE OF YOUR GRIB RECORDS
+< C       IS LARGER THAN 20000, SET MXSIZE TO 20000.
+< C  *************************************************************
+< C
+<       PARAMETER     (MXSIZE=260000)
+2433a2504,2505
+>       CHARACTER*1   KK(8)
+>       CHARACTER*1   CKREF(8)
+2435c2507
+<       LOGICAL       KBMS(*)
+---
+>       LOGICAL*1     KBMS(*)
+2442c2514,2516
+<       INTEGER       KSAVE(MXSIZE)
+---
+>       INTEGER       KREF
+>       INTEGER       KKK
+>       INTEGER,ALLOCATABLE::  KSAVE(:)
+2449a2524,2527
+>       EQUIVALENCE   (CKREF(1),KREF,REFNCE)
+>       EQUIVALENCE   (KK(1),KKK,REALKK)
+> C
+> C
+2453d2530
+<       SAVE
+2460c2537
+<       CALL GBYTEC(MSGA,KPTR(14),KPTR(8),4)
+---
+>       CALL GBYTE(MSGA,KPTR(14),KPTR(8),4)
+2463c2540
+<       CALL GBYTEC(MSGA,KPTR(15),KPTR(8),4)
+---
+>       CALL GBYTE(MSGA,KPTR(15),KPTR(8),4)
+2470c2547
+<       CALL GBYTEC(MSGA,KSIGN,KPTR(8),1)
+---
+>       CALL GBYTE (MSGA,KSIGN,KPTR(8),1)
+2473c2550
+<       CALL GBYTEC(MSGA,KSCALE,KPTR(8),15)
+---
+>       CALL GBYTE (MSGA,KSCALE,KPTR(8),15)
+2479d2555
+< 
+2482,2485c2558
+<       
+<       call gbytec(MSGA,JSGN,KPTR(8),1)
+<       call gbytec(MSGA,JEXP,KPTR(8)+1,7)
+<       call gbytec(MSGA,IFR,KPTR(8)+8,24)
+---
+>       CALL GBYTE (MSGA,KREF,KPTR(8),32)
+2487,2489c2560,2578
+< 
+< c     PRINT *,109,JSGN,JEXP,IFR
+< c 109 FORMAT (' JSGN,JEXP,IFR = ',3(1X,Z8))
+---
+> C
+> C     THE NEXT CODE WILL CONVERT THE IBM370 FLOATING POINT
+> C     TO THE FLOATING POINT USED ON YOUR COMPUTER.
+> C
+> C     1ST TEST TO SEE IN ON 32 OR 64 BIT WORD MACHINE
+> C     LW = 4 OR 8;  IF 8 MAY BE A CRAY
+> C
+>       CALL W3FI01(LW)
+>       IF (LW.EQ.4) THEN
+>         CALL GBYTE (CKREF,JSGN,0,1)
+>         CALL GBYTE (CKREF,JEXP,1,7)
+>         CALL GBYTE (CKREF,IFR,8,24)
+>       ELSE
+>         CALL GBYTE (CKREF,JSGN,32,1)
+>         CALL GBYTE (CKREF,JEXP,33,7)
+>         CALL GBYTE (CKREF,IFR,40,24)
+>       ENDIF
+> C     PRINT *,109,JSGN,JEXP,IFR
+> C 109 FORMAT (' JSGN,JEXP,IFR = ',3(1X,Z8))
+2491a2581,2582
+>       ELSE IF (JEXP.EQ.0.AND.IFR.EQ.0) THEN
+>           REFNCE  = 0.0
+2496,2497c2587
+< C     PRINT *,'SCALE ',SCALE,' REF VAL ',REFNCE
+< 
+---
+> C     PRINT *,'SCALE ',SCALE,' REF VAL ',KREF,REFNCE
+2500c2590
+<       CALL GBYTEC(MSGA,KBITS,KPTR(8),8)
+---
+>       CALL GBYTE (MSGA,KBITS,KPTR(8),8)
+2509,2510c2599,2600
+< C     PRINT *,'BASIC FLAGS =',KPTR(14) ,AND(KPTR(14),1)
+<       IF (AND(KPTR(14),1).EQ.0) THEN
+---
+> C     PRINT *,'BASIC FLAGS =',KPTR(14) ,IAND(KPTR(14),1)
+>       IF (IAND(KPTR(14),1).EQ.0) THEN
+2514c2604
+<           CALL GBYTEC(MSGA,KOCTET,KPTR(8),16)
+---
+>           CALL GBYTE (MSGA,KOCTET,KPTR(8),16)
+2518c2608
+<           CALL GBYTEC(MSGA,KXFLAG,KPTR(8),8)
+---
+>           CALL GBYTE (MSGA,KXFLAG,KPTR(8),8)
+2521c2611
+<           IF (AND(KXFLAG,16).EQ.0) THEN
+---
+>           IF (IAND(KXFLAG,16).EQ.0) THEN
+2528c2618
+<           IF (AND (KXFLAG,32).EQ.0) THEN
+---
+>           IF (IAND (KXFLAG,32).EQ.0) THEN
+2535c2625
+<           IF (AND (KXFLAG,64).EQ.0) THEN
+---
+>           IF (IAND (KXFLAG,64).EQ.0) THEN
+2544c2634
+<           CALL GBYTEC(MSGA,NR,KPTR(8),16)
+---
+>           CALL GBYTE (MSGA,NR,KPTR(8),16)
+2548c2638
+<           CALL GBYTEC(MSGA,NC,KPTR(8),16)
+---
+>           CALL GBYTE (MSGA,NC,KPTR(8),16)
+2552c2642
+<           CALL GBYTEC(MSGA,NRV,KPTR(8),8)
+---
+>           CALL GBYTE (MSGA,NRV,KPTR(8),8)
+2556c2646
+<           CALL GBYTEC(MSGA,NC1,KPTR(8),8)
+---
+>           CALL GBYTE (MSGA,NC1,KPTR(8),8)
+2560c2650
+<           CALL GBYTEC(MSGA,NCV,KPTR(8),8)
+---
+>           CALL GBYTE (MSGA,NCV,KPTR(8),8)
+2564c2654
+<           CALL GBYTEC(MSGA,NC2,KPTR(8),8)
+---
+>           CALL GBYTE (MSGA,NC2,KPTR(8),8)
+2568c2658
+<           CALL GBYTEC(MSGA,KPHYS1,KPTR(8),8)
+---
+>           CALL GBYTE (MSGA,KPHYS1,KPTR(8),8)
+2572c2662
+<           CALL GBYTEC(MSGA,KPHYS2,KPTR(8),8)
+---
+>           CALL GBYTE (MSGA,KPHYS2,KPTR(8),8)
+2581c2671
+<           KENTRY  = KPTR(10)
+---
+>           KENTRY = KPTR(10)
+2583,2586c2673,2676
+<             DATA(I) = 0.0
+<             IF (KBMS(I)) THEN
+<               DATA(I) = REFN10
+<             END IF
+---
+>               DATA(I) = 0.0
+>               IF (KBMS(I)) THEN
+>                    DATA(I) = REFN10
+>               END IF
+2602,2607c2692,2694
+<       KENTRY  = NRBITS / KBITS
+< C                             MAX SIZE CHECK
+<       IF (KENTRY.GT.MXSIZE) THEN
+<           KRET   = 3
+<           RETURN
+<       END IF
+---
+>       KENTRY = NRBITS / KBITS
+> C                             ALLOCATE KSAVE
+>       ALLOCATE(KSAVE(KENTRY))
+2609c2696
+< C     IF (AND(KPTR(14),2).EQ.0) THEN
+---
+> C     IF (IAND(KPTR(14),2).EQ.0) THEN
+2615c2702
+<       IF (AND(KPTR(14),8).EQ.0) THEN
+---
+>       IF (IAND(KPTR(14),8).EQ.0) THEN
+2617c2704
+<          IF (AND(KPTR(14),4).EQ.0) THEN
+---
+>          IF (IAND(KPTR(14),4).EQ.0) THEN
+2619c2706
+<              IF (AND(KPTR(14),1).EQ.0) THEN
+---
+>              IF (IAND(KPTR(14),1).EQ.0) THEN
+2622,2623c2709,2710
+<              ELSE IF (AND(KPTR(14),1).NE.0) THEN
+<                  PRINT *,'        WITH ADDITIONAL FLAGS',KXFLAG
+---
+>              ELSE IF (IAND(KPTR(14),1).NE.0) THEN
+> C                PRINT *,'        WITH ADDITIONAL FLAGS',KXFLAG
+2625c2712
+<                      PRINT *,'            SINGLE DATUM EACH GRID PT'
+---
+> C                    PRINT *,'            SINGLE DATUM EACH GRID PT'
+2627c2714
+<                          PRINT *,'            NO SEC BIT MAP'
+---
+> C                        PRINT *,'            NO SEC BIT MAP'
+2629,2630c2716,2717
+<                              PRINT *,'            SECOND ORDER',
+<      *                          ' VALUES CONSTANT WIDTH'
+---
+> C                            PRINT *,'            SECOND ORDER',
+> C    *                          ' VALUES CONSTANT WIDTH'
+2632,2633c2719,2720
+<                              PRINT *,'            SECOND ORDER',
+<      *                            ' VALUES DIFFERENT WIDTHS'
+---
+> C                            PRINT *,'            SECOND ORDER',
+> C    *                            ' VALUES DIFFERENT WIDTHS'
+2636c2723
+<                          PRINT *,'            SEC BIT MAP'
+---
+> C                        PRINT *,'            SEC BIT MAP'
+2638,2639c2725,2726
+<                               PRINT *,'            SECOND ORDER',
+<      *                              ' VALUES CONSTANT WIDTH'
+---
+> C                             PRINT *,'            SECOND ORDER',
+> C    *                              ' VALUES CONSTANT WIDTH'
+2641,2642c2728,2729
+<                              PRINT *,'            SECOND ORDER',
+<      *                             ' VALUES DIFFERENT WIDTHS'
+---
+> C                            PRINT *,'            SECOND ORDER',
+> C    *                             ' VALUES DIFFERENT WIDTHS'
+2646c2733
+<                      PRINT *,'            MATRIX OF VALS EACH PT'
+---
+> C                    PRINT *,'            MATRIX OF VALS EACH PT'
+2648c2735
+<                          PRINT *,'            NO SEC BIT MAP'
+---
+> C                        PRINT *,'            NO SEC BIT MAP'
+2650,2651c2737,2738
+<                              PRINT *,'            SECOND ORDER',
+<      *                          ' VALUES CONSTANT WIDTH'
+---
+> C                            PRINT *,'            SECOND ORDER',
+> C    *                          ' VALUES CONSTANT WIDTH'
+2653,2654c2740,2741
+<                              PRINT *,'            SECOND ORDER',
+<      *                              ' VALUES DIFFERENT WIDTHS'
+---
+> C                            PRINT *,'            SECOND ORDER',
+> C    *                              ' VALUES DIFFERENT WIDTHS'
+2657c2744
+<                          PRINT *,'            SEC BIT MAP'
+---
+> C                        PRINT *,'            SEC BIT MAP'
+2659,2660c2746,2747
+<                              PRINT *,'            SECOND ORDER',
+<      *                             ' VALUES CONSTANT WIDTH'
+---
+> C                            PRINT *,'            SECOND ORDER',
+> C    *                             ' VALUES CONSTANT WIDTH'
+2662,2663c2749,2750
+<                              PRINT *,'            SECOND ORDER',
+<      *                              ' VALUES DIFFERENT WIDTHS'
+---
+> C                            PRINT *,'            SECOND ORDER',
+> C    *                              ' VALUES DIFFERENT WIDTHS'
+2668,2673c2755,2760
+<          ELSE IF (AND(KPTR(14),4).NE.0) THEN
+<              PRINT *,'    WITH COMPLEX/SECOND ORDER PACKING'
+<              IF (AND(KPTR(14),1).EQ.0) THEN
+<                      PRINT *,'        WITH NO ADDITIONAL FLAGS'
+<              ELSE IF (AND(KPTR(14),1).NE.0) THEN
+<                  PRINT *,'        WITH ADDITIONAL FLAGS'
+---
+>          ELSE IF (IAND(KPTR(14),4).NE.0) THEN
+> C            PRINT *,'    WITH COMPLEX/SECOND ORDER PACKING'
+>              IF (IAND(KPTR(14),1).EQ.0) THEN
+> C                    PRINT *,'        WITH NO ADDITIONAL FLAGS'
+>              ELSE IF (IAND(KPTR(14),1).NE.0) THEN
+> C                PRINT *,'        WITH ADDITIONAL FLAGS'
+2675c2762
+<                      PRINT *,'            SINGLE DATUM AT EACH PT'
+---
+> C                    PRINT *,'            SINGLE DATUM AT EACH PT'
+2677c2764
+<                              PRINT *,'            NO SEC BIT MAP'
+---
+> C                            PRINT *,'            NO SEC BIT MAP'
+2679,2680c2766,2767
+<                              PRINT *,'            SECOND ORDER',
+<      *                             ' VALUES CONSTANT WIDTH'
+---
+> C                            PRINT *,'            SECOND ORDER',
+> C    *                             ' VALUES CONSTANT WIDTH'
+2682,2683c2769,2770
+<                              PRINT *,'            SECOND ORDER',
+<      *                              ' VALUES DIFFERENT WIDTHS'
+---
+> C                            PRINT *,'            SECOND ORDER',
+> C    *                              ' VALUES DIFFERENT WIDTHS'
+2690c2777
+<                          PRINT *,'            SEC BIT MAP'
+---
+> C                        PRINT *,'            SEC BIT MAP'
+2692,2693c2779,2780
+<                                  PRINT *,'            SECOND ORDER',
+<      *                              ' VALUES CONSTANT WIDTH'
+---
+> C                                PRINT *,'            SECOND ORDER',
+> C    *                              ' VALUES CONSTANT WIDTH'
+2695,2696c2782,2783
+<                                  PRINT *,'            SECOND ORDER',
+<      *                              ' VALUES DIFFERENT WIDTHS'
+---
+> C                                PRINT *,'            SECOND ORDER',
+> C    *                              ' VALUES DIFFERENT WIDTHS'
+2703c2790
+<                      PRINT *,'            MATRIX OF VALS EACH PT'
+---
+> C                    PRINT *,'            MATRIX OF VALS EACH PT'
+2705c2792
+<                          PRINT *,'            NO SEC BIT MAP'
+---
+> C                        PRINT *,'            NO SEC BIT MAP'
+2707,2708c2794,2795
+<                                PRINT *,'            SECOND ORDER',
+<      *                              ' VALUES CONSTANT WIDTH'
+---
+> C                              PRINT *,'            SECOND ORDER',
+> C    *                              ' VALUES CONSTANT WIDTH'
+2710,2711c2797,2798
+<                              PRINT *,'            SECOND ORDER',
+<      *                              ' VALUES DIFFERENT WIDTHS'
+---
+> C                            PRINT *,'            SECOND ORDER',
+> C    *                              ' VALUES DIFFERENT WIDTHS'
+2714c2801
+<                          PRINT *,'            SEC BIT MAP'
+---
+> C                        PRINT *,'            SEC BIT MAP'
+2716,2717c2803,2804
+<                                PRINT *,'            SECOND ORDER',
+<      *                              ' VALUES CONSTANT WIDTH'
+---
+> C                              PRINT *,'            SECOND ORDER',
+> C    *                              ' VALUES CONSTANT WIDTH'
+2719,2720c2806,2807
+<                                  PRINT *,'            SECOND ORDER',
+<      *                              ' VALUES DIFFERENT WIDTHS'
+---
+> C                                PRINT *,'            SECOND ORDER',
+> C    *                              ' VALUES DIFFERENT WIDTHS'
+2726,2731c2813,2818
+<       ELSE IF (AND(KPTR(14),8).NE.0) THEN
+<          PRINT *,'PROCESSING SPHERICAL HARMONIC COEFFICIENTS'
+<          IF (AND(KPTR(14),4).EQ.0) THEN
+<              PRINT *,'    WITH SIMPLE PACKING'
+<              IF (AND(KPTR(14),1).EQ.0) THEN
+<                  PRINT *,'        WITH NO ADDITIONAL FLAGS'
+---
+>       ELSE IF (IAND(KPTR(14),8).NE.0) THEN
+> C        PRINT *,'PROCESSING SPHERICAL HARMONIC COEFFICIENTS'
+>          IF (IAND(KPTR(14),4).EQ.0) THEN
+> C            PRINT *,'    WITH SIMPLE PACKING'
+>              IF (IAND(KPTR(14),1).EQ.0) THEN
+> C                PRINT *,'        WITH NO ADDITIONAL FLAGS'
+2733,2734c2820,2821
+<              ELSE IF (AND(KPTR(14),1).NE.0) THEN
+<                  PRINT *,'        WITH ADDITIONAL FLAGS'
+---
+>              ELSE IF (IAND(KPTR(14),1).NE.0) THEN
+> C                PRINT *,'        WITH ADDITIONAL FLAGS'
+2736c2823
+<                      PRINT *,'            SINGLE DATUM EACH GRID PT'
+---
+> C                    PRINT *,'            SINGLE DATUM EACH GRID PT'
+2738c2825
+<                          PRINT *,'            NO SEC BIT MAP'
+---
+> C                        PRINT *,'            NO SEC BIT MAP'
+2740,2741c2827,2828
+<                              PRINT *,'            SECOND ORDER',
+<      *                              ' VALUES CONSTANT WIDTH'
+---
+> C                            PRINT *,'            SECOND ORDER',
+> C    *                              ' VALUES CONSTANT WIDTH'
+2743,2744c2830,2831
+<                              PRINT *,'            SECOND ORDER',
+<      *                              ' VALUES DIFFERENT WIDTHS'
+---
+> C                            PRINT *,'            SECOND ORDER',
+> C    *                              ' VALUES DIFFERENT WIDTHS'
+2747c2834
+<                          PRINT *,'            SEC BIT MAP'
+---
+> C                        PRINT *,'            SEC BIT MAP'
+2749,2750c2836,2837
+<                              PRINT *,'            SECOND ORDER',
+<      *                              ' VALUES CONSTANT WIDTH'
+---
+> C                            PRINT *,'            SECOND ORDER',
+> C    *                              ' VALUES CONSTANT WIDTH'
+2752,2753c2839,2840
+<                              PRINT *,'            SECOND ORDER',
+<      *                            ' VALUES DIFFERENT WIDTHS'
+---
+> C                            PRINT *,'            SECOND ORDER',
+> C    *                            ' VALUES DIFFERENT WIDTHS'
+2757c2844
+<                      PRINT *,'            MATRIX OF VALS EACH PT'
+---
+> C                    PRINT *,'            MATRIX OF VALS EACH PT'
+2759c2846
+<                          PRINT *,'            NO SEC BIT MAP'
+---
+> C                        PRINT *,'            NO SEC BIT MAP'
+2761,2762c2848,2849
+<                              PRINT *,'            SECOND ORDER',
+<      *                              ' VALUES CONSTANT WIDTH'
+---
+> C                            PRINT *,'            SECOND ORDER',
+> C    *                              ' VALUES CONSTANT WIDTH'
+2764,2765c2851,2852
+<                              PRINT *,'            SECOND ORDER',
+<      *                             ' VALUES DIFFERENT WIDTHS'
+---
+> C                            PRINT *,'            SECOND ORDER',
+> C    *                             ' VALUES DIFFERENT WIDTHS'
+2768c2855
+<                          PRINT *,'            SEC BIT MAP'
+---
+> C                        PRINT *,'            SEC BIT MAP'
+2770,2771c2857,2858
+<                              PRINT *,'            SECOND ORDER',
+<      *                              ' VALUES CONSTANT WIDTH'
+---
+> C                            PRINT *,'            SECOND ORDER',
+> C    *                              ' VALUES CONSTANT WIDTH'
+2773,2774c2860,2861
+<                              PRINT *,'            SECOND ORDER',
+<      *                             ' VALUES DIFFERENT WIDTHS'
+---
+> C                            PRINT *,'            SECOND ORDER',
+> C    *                             ' VALUES DIFFERENT WIDTHS'
+2779c2866
+<          ELSE IF (AND(KPTR(14),4).NE.0) THEN
+---
+>          ELSE IF (IAND(KPTR(14),4).NE.0) THEN
+2781,2785c2868,2872
+<              PRINT *,'    WITH COMPLEX/SECOND ORDER PACKING'
+<              IF (AND(KPTR(14),1).EQ.0) THEN
+<                  PRINT *,'        WITH NO ADDITIONAL FLAGS'
+<              ELSE IF (AND(KPTR(14),1).NE.0) THEN
+<                  PRINT *,'        WITH ADDITIONAL FLAGS'
+---
+> C            PRINT *,'    WITH COMPLEX/SECOND ORDER PACKING'
+>              IF (IAND(KPTR(14),1).EQ.0) THEN
+> C                PRINT *,'        WITH NO ADDITIONAL FLAGS'
+>              ELSE IF (IAND(KPTR(14),1).NE.0) THEN
+> C                PRINT *,'        WITH ADDITIONAL FLAGS'
+2787c2874
+<                      PRINT *,'            SINGLE DATUM EACH GRID PT'
+---
+> C                    PRINT *,'            SINGLE DATUM EACH GRID PT'
+2789c2876
+<                          PRINT *,'            NO SEC BIT MAP'
+---
+> C                        PRINT *,'            NO SEC BIT MAP'
+2791,2792c2878,2879
+<                              PRINT *,'            SECOND ORDER',
+<      *                             ' VALUES CONSTANT WIDTH'
+---
+> C                            PRINT *,'            SECOND ORDER',
+> C    *                             ' VALUES CONSTANT WIDTH'
+2794,2795c2881,2882
+<                              PRINT *,'            SECOND ORDER',
+<      *                              ' VALUES DIFFERENT WIDTHS'
+---
+> C                            PRINT *,'            SECOND ORDER',
+> C    *                              ' VALUES DIFFERENT WIDTHS'
+2798c2885
+<                          PRINT *,'            SEC BIT MAP'
+---
+> C                        PRINT *,'            SEC BIT MAP'
+2800,2801c2887,2888
+<                              PRINT *,'            SECOND ORDER',
+<      *                              ' VALUES CONSTANT WIDTH'
+---
+> C                            PRINT *,'            SECOND ORDER',
+> C    *                              ' VALUES CONSTANT WIDTH'
+2803,2804c2890,2891
+<                              PRINT *,'            SECOND ORDER',
+<      *                              ' VALUES DIFFERENT WIDTHS'
+---
+> C                            PRINT *,'            SECOND ORDER',
+> C    *                              ' VALUES DIFFERENT WIDTHS'
+2808c2895
+<                      PRINT *,'            MATRIX OF VALS EACH PT'
+---
+> C                    PRINT *,'            MATRIX OF VALS EACH PT'
+2810c2897
+<                          PRINT *,'            NO SEC BIT MAP'
+---
+> C                        PRINT *,'            NO SEC BIT MAP'
+2812,2813c2899,2900
+<                              PRINT *,'            SECOND ORDER',
+<      *                            ' VALUES CONSTANT WIDTH'
+---
+> C                            PRINT *,'            SECOND ORDER',
+> C    *                            ' VALUES CONSTANT WIDTH'
+2815,2816c2902,2903
+<                              PRINT *,'            SECOND ORDER',
+<      *                              ' VALUES DIFFERENT WIDTHS'
+---
+> C                            PRINT *,'            SECOND ORDER',
+> C    *                              ' VALUES DIFFERENT WIDTHS'
+2819c2906
+<                          PRINT *,'            SEC BIT MAP'
+---
+> C                        PRINT *,'            SEC BIT MAP'
+2821,2822c2908,2909
+<                              PRINT *,'            SECOND ORDER',
+<      *                              ' VALUES CONSTANT WIDTH'
+---
+> C                            PRINT *,'            SECOND ORDER',
+> C    *                              ' VALUES CONSTANT WIDTH'
+2824,2825c2911,2912
+<                              PRINT *,'            SECOND ORDER',
+<      *                              ' VALUES DIFFERENT WIDTHS'
+---
+> C                            PRINT *,'            SECOND ORDER',
+> C    *                              ' VALUES DIFFERENT WIDTHS'
+2832c2919,2920
+<       PRINT *,' NOT PROCESSED - NOT PROCESSED - NOT PROCESSED'
+---
+>       IF(ALLOCATED(KSAVE)) DEALLOCATE(KSAVE)
+> C     PRINT *,' NOT PROCESSED - NOT PROCESSED - NOT PROCESSED'
+2851c2939
+<           CALL GBYTESC(MSGA,KSAVE,KPTR(8),KBITS,0,KNR)
+---
+>           CALL GBYTES (MSGA,KSAVE,KPTR(8),KBITS,0,KNR)
+2856,2861c2944,2949
+<             IF (KBMS(I)) THEN
+<               DATA(I) = (REFNCE + FLOAT(KSAVE(II)) * SCALE) * SCAL10
+<               II      = II + 1
+<             ELSE
+<               DATA(I)   = 0.0
+<             END IF
+---
+>               IF (KBMS(I)) THEN
+>                   DATA(I)   = (REFNCE+FLOAT(KSAVE(II))*SCALE)*SCAL10
+>                   II        = II + 1
+>               ELSE
+>                   DATA(I)   = 0.0
+>               END IF
+2864c2952
+<             DATA(I)   = DATA(1)
+---
+>               DATA(I)   = DATA(1)
+2868c2956
+<           CALL GBYTESC(MSGA,KSAVE,KPTR(8),KBITS,0,KNR)
+---
+>           CALL GBYTES (MSGA,KSAVE,KPTR(8),KBITS,0,KNR)
+2872,2877c2960,2965
+<             IF (KBMS(I)) THEN
+<               DATA(I) = (REFNCE + FLOAT(KSAVE(II)) * SCALE) * SCAL10
+<               II  = II + 1
+<             ELSE
+<               DATA(I) = 0.0
+<             END IF
+---
+>               IF (KBMS(I)) THEN
+>                   DATA(I) = (REFNCE + FLOAT(KSAVE(II)) * SCALE) * SCAL10
+>                   II  = II + 1
+>               ELSE
+>                   DATA(I) = 0.0
+>               END IF
+2880c2968
+<             KADD    = 71
+---
+>               KADD    = 71
+2882c2970
+<             KADD    = 90
+---
+>               KADD    = 90
+2884c2972
+<             KADD    = 36
+---
+>               KADD    = 36
+2891c2979
+<           CALL GBYTESC(MSGA,KSAVE,KPTR(8),KBITS,0,KNR)
+---
+>           CALL GBYTES (MSGA,KSAVE,KPTR(8),KBITS,0,KNR)
+2895,2900c2983,2988
+<             IF (KBMS(I)) THEN
+<               DATA(I) = (REFNCE + FLOAT(KSAVE(II)) * SCALE) * SCAL10
+<               II  = II + 1
+<             ELSE
+<               DATA(I) = 0.0
+<             END IF
+---
+>               IF (KBMS(I)) THEN
+>                   DATA(I) = (REFNCE + FLOAT(KSAVE(II)) * SCALE) * SCAL10
+>                   II  = II + 1
+>               ELSE
+>                   DATA(I) = 0.0
+>               END IF
+2909,2912c2997
+< 
+<       call gbytec(MSGA,JSGN,KPTR(8),1)
+<       call gbytec(MSGA,JEXP,KPTR(8)+1,7)
+<       call gbytec(MSGA,IFR,KPTR(8)+8,24)
+---
+>       CALL GBYTE (MSGA,KKK,KPTR(8),32)
+2914d2998
+< 
+2918a3003,3016
+> C     1ST TEST TO SEE IN ON 32 OR 64 BIT WORD MACHINE
+> C     LW = 4 OR 8;  IF 8 MAY BE A CRAY
+> C
+>       CALL W3FI01(LW)
+>       IF (LW.EQ.4) THEN
+>         CALL GBYTE (KK,JSGN,0,1)
+>         CALL GBYTE (KK,JEXP,1,7)
+>         CALL GBYTE (KK,IFR,8,24)
+>       ELSE
+>         CALL GBYTE (KK,JSGN,32,1)
+>         CALL GBYTE (KK,JEXP,33,7)
+>         CALL GBYTE (KK,IFR,40,24)
+>       ENDIF
+> C
+2920a3019,3020
+>       ELSE IF (JEXP.EQ.0.AND.IFR.EQ.0) THEN
+>           REALKK  = 0.0
+2926c3026
+<       CALL GBYTESC(MSGA,KSAVE,KPTR(8),KBITS,0,KNR)
+---
+>       CALL GBYTES (MSGA,KSAVE,KPTR(8),KBITS,0,KNR)
+2931a3032
+>       IF(ALLOCATED(KSAVE)) DEALLOCATE(KSAVE)
+2948,2949c3049,3051
+< C   95-04-26  R.E.JONES   FI636 CORECTION FOR 2ND ORDER COMPLEX 
+< C                         UNPACKING.  
+---
+> C   95-04-26  R.E.JONES   FI636 CORECTION FOR 2ND ORDER COMPLEX
+> C                         UNPACKING.
+> C   95-10-31  IREDELL     REMOVED SAVES AND PRINTS
+2986c3088
+< C REMARKS:
+---
+> C REMARKS: SUBPROGRAM CAN BE CALLED FROM A MULTIPROCESSING ENVIRONMENT.
+2993a3096
+>       REAL         REFN
+2998c3101
+<       INTEGER      BMAP2(12500)
+---
+>       INTEGER      JREF,BMAP2(12500)
+3003c3106
+<       LOGICAL      KBMS(*)
+---
+>       LOGICAL*1    KBMS(*)
+3006a3110
+>       EQUIVALENCE  (JREF,REFN)
+3008,3009d3111
+<       SAVE
+< 
+3024,3025c3126,3127
+<       CALL GBYTEC(MSGA,ISIGN,JPTR+32,1)
+<       CALL GBYTEC(MSGA,KBDS(11),JPTR+33,15)
+---
+>       CALL GBYTE (MSGA,ISIGN,JPTR+32,1)
+>       CALL GBYTE (MSGA,KBDS(11),JPTR+33,15)
+3029a3132,3134
+> C                  EXTRACT REFERENCE VALUE
+>       CALL GBYTE(MSGA,JREF,JPTR+48,32)
+> C     PRINT *,'DECODED REFERENCE VALUE =',REFN,REFNCE
+3031c3136
+<       CALL GBYTEC(MSGA,KBDS(13),JPTR+80,8)
+---
+>       CALL GBYTE(MSGA,KBDS(13),JPTR+80,8)
+3035c3140
+<       CALL GBYTEC(MSGA,KBDS(1),JPTR,16)
+---
+>       CALL GBYTE (MSGA,KBDS(1),JPTR,16)
+3039c3144
+<       CALL GBYTEC(MSGA,KFLAG,JPTR,8)
+---
+>       CALL GBYTE (MSGA,KFLAG,JPTR,8)
+3041,3042c3146,3147
+<       IF (AND(KFLAG,32).NE.0) THEN
+<         KBDS(14) = 1
+---
+>       IF (IAND(KFLAG,32).NE.0) THEN
+>         KBDS(14)  = 1
+3044c3149
+<         KBDS(14) = 0
+---
+>         KBDS(14)  = 0
+3046,3047c3151,3152
+<       IF (AND(KFLAG,16).NE.0) THEN
+<         KBDS(16) = 1
+---
+>       IF (IAND(KFLAG,16).NE.0) THEN
+>         KBDS(16)  = 1
+3049c3154
+<         KBDS(16) = 0
+---
+>         KBDS(16)  = 0
+3051,3052c3156,3157
+<       IF (AND(KFLAG,64).NE.0) THEN
+<         KBDS(17) = 1
+---
+>       IF (IAND(KFLAG,64).NE.0) THEN
+>         KBDS(17)  = 1
+3054c3159
+<         KBDS(17) = 0
+---
+>         KBDS(17)  = 0
+3058c3163
+<       CALL GBYTEC(MSGA,KBDS(2),JPTR,16)
+---
+>       CALL GBYTE (MSGA,KBDS(2),JPTR,16)
+3062c3167
+<       CALL GBYTEC(MSGA,KBDS(3),JPTR,16)
+---
+>       CALL GBYTE (MSGA,KBDS(3),JPTR,16)
+3066c3171
+<       CALL GBYTEC(MSGA,KBDS(4),JPTR,16)
+---
+>       CALL GBYTE (MSGA,KBDS(4),JPTR,16)
+3113c3218
+<                   PRINT *,'CANNOT BE USED HERE'
+---
+> C                 PRINT *,'CANNOT BE USED HERE'
+3121c3226
+<                       CALL GBYTEC(MSGA,NUMBER,LP,16)
+---
+>                       CALL GBYTE (MSGA,NUMBER,LP,16)
+3136c3241
+<               IF (AND(KGDS(11),32).EQ.0) THEN
+---
+>               IF (IAND(KGDS(11),32).EQ.0) THEN
+3176c3281
+<                   CALL GBYTEC(MSGA,KBIT,KBDS(6),1)
+---
+>                   CALL GBYTE (MSGA,KBIT,KBDS(6),1)
+3185c3290
+<                   CALL GBYTEC(MSGA,IFOVAL,KBDS(7),KBDS(13))
+---
+>                   CALL GBYTE (MSGA,IFOVAL,KBDS(7),KBDS(13))
+3189c3294
+<                   CALL GBYTEC(MSGA,KBDS(15),KBDS(5),8)
+---
+>                   CALL GBYTE (MSGA,KBDS(15),KBDS(5),8)
+3203c3308
+<                   CALL GBYTEC(MSGA,ISOVAL,KBDS(8),KBDS(15))
+---
+>                   CALL GBYTE (MSGA,ISOVAL,KBDS(8),KBDS(15))
+3220c3325
+<       SUBROUTINE FI637(*,J,KPDS,KGDS,KRET)
+---
+>       SUBROUTINE FI637(J,KPDS,KGDS,KRET)
+3230a3336,3338
+> C   95-10-31  IREDELL     REMOVED SAVES AND PRINTS
+> C   97-02-12  W BOSTELMAN CORRECTS ECMWF US GRID 2 PROCESSING
+> C   98-06-17  IREDELL     REMOVED ALTERNATE RETURN
+3232c3340
+< C USAGE:    CALL FI637(*,J,KPDS,KGDS,KRET)
+---
+> C USAGE:    CALL FI637(J,KPDS,KGDS,KRET)
+3238a3347
+> C     J        - SIZE FOR INDICATED GRID MODIFIED FOR ECMWF-US 2
+3239a3349
+> C                (A MISMATCH WAS DETECTED IF KRET IS NOT ZERO)
+3244a3355,3356
+> C   SUBPROGRAM CAN BE CALLED FROM A MULTIPROCESSING ENVIRONMENT.
+> C
+3255,3256d3366
+<       SAVE
+< 	KRET=0
+3260c3370,3371
+<       IF (AND(KPDS(4),128).EQ.0) RETURN
+---
+>       KRET=0
+>       IF (IAND(KPDS(4),128).EQ.0) RETURN
+3266a3378
+>       KRET=1
+3273c3385
+<                RETURN 1
+---
+>                RETURN
+3277c3389
+<               RETURN 1
+---
+>               RETURN
+3281c3393
+<               RETURN 1
+---
+>               RETURN
+3285c3397
+<               RETURN 1
+---
+>               RETURN
+3294c3406,3411
+<                   RETURN 1
+---
+>                 IF (KPDS(3) .NE. 2) THEN 
+>                   RETURN
+>                 ELSEIF (I .NE. 10512) THEN ! Test for US Grid 2
+>                   RETURN
+>                 END IF
+>                 J  = I   ! Set to US Grid 2, 2.5 Global
+3298c3415
+<               RETURN 1
+---
+>               RETURN
+3307c3424
+<                   RETURN 1
+---
+>                   RETURN
+3311c3428
+<               RETURN 1
+---
+>               RETURN
+3317,3318c3434,3435
+<           PRINT *,' NO CURRENT LISTING OF CANADIAN GRIDS'
+<           RETURN 1
+---
+> C         PRINT *,' NO CURRENT LISTING OF CANADIAN GRIDS'
+>           RETURN
+3323,3324c3440,3441
+<           PRINT *,' NO CURRENT LISTING OF JMA GRIDS'
+<           RETURN 1
+---
+> C         PRINT *,' NO CURRENT LISTING OF JMA GRIDS'
+>           RETURN
+3331c3448
+<                   RETURN 1
+---
+>                   RETURN
+3335c3452
+<                   RETURN 1
+---
+>                   RETURN
+3339c3456
+<                   RETURN 1
+---
+>                   RETURN
+3343c3460
+<               RETURN 1
+---
+>               RETURN
+3352c3469
+<                   RETURN 1
+---
+>                   RETURN
+3356c3473,3477
+<                   RETURN 1
+---
+>                   RETURN
+>               END IF
+>           ELSE IF (KPDS(3).EQ.8) THEN
+>               IF (I.NE.J) THEN
+>                   RETURN
+3360c3481
+<                   RETURN 1
+---
+>                   RETURN
+3364c3485
+<                   RETURN 1
+---
+>                   RETURN
+3368c3489,3493
+<                   RETURN 1
+---
+>                   RETURN
+>               END IF
+>           ELSE IF (KPDS(3).EQ.53) THEN
+>               IF (I.NE.J) THEN
+>                   RETURN
+3372c3497
+<                   RETURN 1
+---
+>                   RETURN
+3376c3501
+<                   RETURN 1
+---
+>                   RETURN
+3380c3505
+<                   RETURN 1
+---
+>                   RETURN
+3384c3509
+<                   RETURN 1
+---
+>                   RETURN
+3388c3513
+<                   RETURN 1
+---
+>                   RETURN
+3392c3517
+<                   RETURN 1
+---
+>                   RETURN
+3396c3521
+<                   RETURN 1
+---
+>                   RETURN
+3399a3525,3528
+>                   RETURN
+>               END IF
+>           ELSE IF (KPDS(3).EQ.190.OR.KPDS(3).EQ.192) THEN
+>               IF (I.NE.J) THEN
+3401a3531,3534
+>           ELSE IF (KPDS(3).EQ.196) THEN
+>               IF (I.NE.J) THEN
+>                   RETURN
+>               END IF
+3404c3537
+<                   RETURN 1
+---
+>                   RETURN
+3408c3541
+<               RETURN 1
+---
+>               RETURN
+3412c3545
+<           RETURN 1
+---
+>           RETURN

@@ -1,0 +1,105 @@
+#!/bin/sh
+
+
+cd ../../
+ETAROOT=`pwd`
+cd ../
+HOME=`pwd`
+
+echo "... etaroot ... $ETAROOT"
+
+cd $ETAROOT/libraries
+./clean_all.csh
+
+cd $ETAROOT/dprep_IVAN/g2lib
+make clean
+
+cd $ETAROOT/dprep_IVAN/src
+make clean
+
+#cd $ETAROOT/eta/graph/database/src
+#make clean
+
+cd $ETAROOT/dprep_IVAN/soil/src
+make clean
+
+rm -f $ETAROOT/eta/runs/EGRD*
+rm -f $ETAROOT/eta/runs/restrt*
+rm -f $ETAROOT/eta/runs/fcstdone*
+rm -f $ETAROOT/eta/runs/latlon*
+rm -f $ETAROOT/eta/runs/lmbc*
+rm -f $ETAROOT/eta/runs/preproc.*
+rm -f $ETAROOT/eta/runs/bndy.*
+rm -f $ETAROOT/eta/runs/cnst.file
+rm -f $ETAROOT/eta/runs/init.file
+rm -f $ETAROOT/eta/runs/ZEFF
+rm -f $ETAROOT/eta/runs/etatopo.dat
+rm -f $ETAROOT/eta/runs/*co2.dat
+rm -f $ETAROOT/eta/runs/fort.*
+rm -f $ETAROOT/eta/runs/grdnav.tbl
+rm -f $ETAROOT/eta/runs/profdat
+rm -f $ETAROOT/eta/runs/ETAIN
+rm -f $ETAROOT/eta/runs/outjob_input_*
+rm -f $ETAROOT/eta/runs/dump
+rm -f $ETAROOT/eta/runs/namelist.*
+rm -f $ETAROOT/eta/runs/post.*
+rm -f $ETAROOT/eta/runs/quilt.*
+rm -f $ETAROOT/eta/runs/fcstdata.meso.in
+rm -f $ETAROOT/eta/runs/fcstdata.meso
+
+rm -f $ETAROOT/eta/bin/ZEFF
+rm -f $ETAROOT/eta/bin/smask.30s.*
+rm -f $ETAROOT/eta/bin/*.o
+rm -f $ETAROOT/eta/bin/fort.*
+rm -f $ETAROOT/eta/bin/ETAIN
+rm -f $ETAROOT/eta/bin/cdate11
+rm -f $ETAROOT/eta/bin/deta
+rm -f $ETAROOT/eta/bin/deta.dat
+rm -f $ETAROOT/eta/bin/*.out
+rm -f $ETAROOT/eta/bin/tmp.smask
+rm -f $ETAROOT/eta/bin/stalst.x
+rm -f $ETAROOT/eta/bin/stalst_add.txt
+rm -f $ETAROOT/eta/bin/select.x
+
+rm -f $ETAROOT/data/prep/*
+rm -f $ETAROOT/eta/exe/*
+rm -f $ETAROOT/eta/lib/*
+rm -f $ETAROOT/eta/init_out/*
+
+rm -f $ETAROOT/eta/input_data/hgt_sm.dat
+rm -f $ETAROOT/eta/input_data/soil.soil
+rm -f $ETAROOT/eta/input_data/soil.veg
+rm -f $ETAROOT/eta/input_data/gfrac.gfrac
+rm -f $ETAROOT/eta/input_data/albedo.alb
+
+rm -f $ETAROOT/eta/src/etafcst_all/*.o
+rm -f $ETAROOT/eta/src/etafcst_all/*.f
+rm -f $ETAROOT/eta/src/etafcst_all/*.mod
+rm -f $ETAROOT/eta/src/etafcst_all/parmeta
+
+rm -f $ETAROOT/eta/graph/ctl/eta.grb
+rm -f $ETAROOT/eta/graph/output/*.grb
+rm -f $ETAROOT/eta/graph/gif/*.gif
+
+rm -f $ETAROOT/eta/graph/database/exe/*.txt
+rm -f $ETAROOT/eta/graph/database/exe/in_forecast_location.eta
+
+rm -f $ETAROOT/quilt/*.o
+rm -f $ETAROOT/quilt/parmeta
+rm -f $ETAROOT/post_new/*.o
+rm -f $ETAROOT/post_new/parmeta
+rm -f $ETAROOT/post_new/parmout
+rm -f $ETAROOT/copygb/*.o
+
+rm -f $ETAROOT/eta/src/prep/initbc/*.o
+rm -f $ETAROOT/eta/src/prep/sfc/*.o
+
+rm -f $ETAROOT/eta/install/eta_install.log
+rm -f $ETAROOT/eta/run/eta_run.log
+rm -f $ETAROOT/eta/install/Makefile
+rm -f $ETAROOT/newFTP/temp/*
+rm -f $ETAROOT/LOG_dir/*
+rm -f $ETAROOT/eta/namelist/ETAIN
+rm -f $ETAROOT/eta/src/include/parmeta*
+
+exit 0

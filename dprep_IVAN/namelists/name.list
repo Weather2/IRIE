@@ -1,0 +1,104 @@
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!                      NAMELISTS for Eta model V4.0                  !
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!---------------------------------------------------------------------
+!
+! Namelist DECODING_NL used in:
+!          ../decoding/src/decod.F
+!          ../decoding/src/decodSST.F
+!          ../preproc/src/anec.F
+!
+ $DECODING_NL
+  FN_GRIB      = '../../../input_data/PPP'
+  FN_NCARSST   = '../../../input_data/SSTNH'
+  FN_LLSPL     = '../../output/decoding.llspl.'
+  FN_SSTDAY    = '../../../input_data/sst.gdat'
+  FN_LLSST     = '../../output/decoding.llsst'
+  FN_LLSURFT   = '../../output/decoding.llsurft'
+  FN_LLSURFW   = '../../output/decoding.llsurfw'
+ $END
+
+!---------------------------------------------------------------------
+!
+! Namelist MOUNT_NL used in: 
+!          ../mount/src/mountnew.F
+!          ../mount/src/mountnew30.F
+!          ../soil/src/texteta.F
+!          ../soil/src/vegeta.F
+!          ../preproc/src/pteta.F
+!
+ $MOUNT_NL
+  FN_USNAVY    = '../../../input_data/usnavy.dat'
+  FN_E1        = '../../../input_data/eur_30_dem1.bil'
+  FN_E2        = '../../../input_data/eur_30_dem2.bil'
+  FN_A1        = '../../../input_data/af30as_1.dem'
+  FN_A2        = '../../../input_data/af30as_2.dem'
+  FN_GT30      = '../../../input_data/'
+  FN_MOUNT13   = '../../../eta/runs/etatopo.dat'
+ $END
+
+!---------------------------------------------------------------------
+!
+! Namelist SOIL_NL used in: 
+!          ../soil/src/text4eta.F
+!          ../soil/src/texteta.F
+!          ../soil/src/vegeta.F
+!          ../preproc/src/const.F
+!
+ $SOIL_NL
+  FN_SRZ       = '../../../input_data/srztext.dat'
+  FN_FAO       = '../../../input_data/faosoil.dat'
+  FN_TEXT4ETA  = '../../output/soil.text4eta'
+  FN_TEXTETA   = '../../output/soil.texteta'
+  FN_SOIL      = '../../../eta/input_data/soil.soil'
+  FN_OWE       = '../../../input_data/owe14.img'
+  FN_VEG       = '../../../eta/input_data/soil.veg'
+  FN_ALBEDO    = '../../../eta/input_data/albedo.alb'
+  FN_GFRAC     = '../../../eta/input_data/gfrac.gfrac'
+ $END
+
+!---------------------------------------------------------------------
+!
+! Namelist PREPROC_NL used in:
+!          ../preproc/src/anec.F
+!          ../preproc/src/pteta.F
+!          ../preproc/src/const.F
+!          ../preproc/src/boco.F
+!          ../model2d/src/init.f
+!
+ &PREPROC_NL
+  FN_ANEC      = '../../output/preproc.anec.'
+  FN_SST       = '../../output/preproc.const.sst'
+  FN_SNO       = '../../output/preproc.const.sno'
+  FN_SURFT     = '../../output/preproc.const.surft'
+  FN_SURFW     = '../../output/preproc.const.surfw'
+  FN_NFCSTE    = '../../output/preproc.pteta.nfcste'
+  FN_NBCE      = '../../output/preproc.pteta.nbce.'
+  FN_NFCST     = '../../output/preproc.const.nfcst'
+  FN_NFCST2D   = '../../output/preproc.const.nfcst2d'
+  FN_NBC       = '../../output/preproc.boco.nbc.'
+  FN_NHIBU     = '../../output/preproc.const.nhibu'
+  FN_NHIBU2D   = '../../output/preproc.const.nhibu2d'
+  FN_MASKS     = '../../output/preproc.const.masks'
+ &END
+
+!---------------------------------------------------------------------
+!
+! Namelist MODEL2D_NL used in:
+!          ../model2d/src/outvar.f
+!
+ $MODEL2D_NL
+  FN_VOUT      = '../../output/v_out.'
+  FN_POUT      = '../../output/p_out.'
+  FN_INIT      = '../../output/INITIAL.TB'
+ $END
+!---------------------------------------------------------------------
+!
+! Namelist POSTPROC_NL used in:
+!          ../postproc/src/score.F
+!
+!
+ $POSTPROC_NL
+  FN_VOUT      = '../../output/v_out.'
+ $END

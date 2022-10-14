@@ -1,0 +1,41 @@
+#! /bin/csh -f
+
+cd ../../
+set ETAROOT=`pwd`
+cd ../
+set HOME=`pwd`
+
+echo "... etaroot ... $ETAROOT"
+echo "... home    ... $HOME"
+
+cd $ETAROOT/eta/install
+
+./configure
+
+cd $ETAROOT/libraries
+./make_all.csh
+
+cd $ETAROOT/eta/install
+
+make
+
+cd $ETAROOT/eta/install
+
+./build_post
+
+cd $ETAROOT/dprep_IVAN/g2lib
+make
+
+cd $ETAROOT/dprep_IVAN/src
+make all root=$ETAROOT
+
+cd $ETAROOT/dprep_IVAN/soil/src
+make root=$ETAROOT
+
+cd $ETAROOT/eta/install
+
+./post_update.sh
+
+echo "------------------------"
+echo "END OF BUILDING ETA EXEC"
+echo "------------------------"
