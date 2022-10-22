@@ -149,15 +149,6 @@ C
           DO J=MYJS_P5,MYJE_P5
           DO I=MYIS_P5,MYIE_P5
             PINTLG(I,J,L)=ALOG(PINT(I,J,L))
-	if (PINTLG(I,J,L) .eq. PINTLG(I,J,L-1)) then
-	write(6,*) 'same pintlg at different levels: ', MYPE,I,J,L
-	STOP 690
-	write(6,*) 'PINT vals: ', PINT(I,J,L),PINT(I,J,L-1),
-     +		PINT(I,J,L-2),PINT(I,J,L-3)
-	write(6,*) 'PINT vals at I-1: ', PINT(I-1,J,L),PINT(I-1,J,L-1),
-     +		PINT(I-1,J,L-2),PINT(I-1,J,L-3)
-
-	endif
           ENDDO
           ENDDO
         ENDDO
