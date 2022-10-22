@@ -782,11 +782,6 @@ C
         PONE(L)=PONE(L)*PDP
         PNP1(L)=PONE(L)+(PNP1(L)-PONE(L))*HBM2(I,J)
         PINT(I,J,L)=PNP1(L)
-
-	if (pint(i,j,l) .eq. pint(i,j,l-1) ) then
-	write(6,*) 'PE,I,J,L= ', MYPE,I,J,L
-	write(6,*) 'SAME PINT at two levels....within EPS'
-	endif
       ENDDO
 C
       DO L=LMP+1,LM
