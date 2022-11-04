@@ -671,7 +671,7 @@ C-----------------------------------------------------------------------
       QW=QSAT(PP,TGS,FIW,FCI)
       IF(FCLOUD*FWI*FIW*TT.GT.A3)QW=AMIN1(QQ,QW)
       FO=TGS+RCP*ELV*QW-RP
-      TG1=TGS-.5*FO
+      TG1=AMAX1(TGS/2.,TGS-.5*FO)
       TGUESS=TGS
       ITCNT=0
    10 QW=QSAT(PP,TG1,FIW,FCI)
