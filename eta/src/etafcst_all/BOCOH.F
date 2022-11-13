@@ -198,8 +198,8 @@ C-----------------------------------------------------------------------
       Q0  (I,J,L)=Q0  (I,J,L)     +Q   (I,J,L)
       Q2  (I,J,L)=Q2B (I,J,L,1)*AN+Q2  (I,J,L)*(1.-AN)
       CWM (I,J,L)=CWMB(I,J,L,1)*AN+CWM (I,J,L)*(1.-AN)
-      PINTB=PD(I,J)*RES(I,J)*ETA(L+1)+PT
-      PINT(I,J,L+1)=PINTB*AN+PINT(I,J,L+1)*(1.-AN)
+      PINTB=PDB(I,J,1)*RES(I,J)*ETA(L+1)+PT
+      PINT(I,J,L+1)=PINTB*AY+PINT(I,J,L+1)*(1.-AY)
            ENDDO
            ENDDO
            ENDDO
