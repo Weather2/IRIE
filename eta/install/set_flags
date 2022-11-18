@@ -31,7 +31,7 @@ echo "---------"
 echo "INTEL    "
 echo "---------"
 FC="ifort"
-FFLAGS="-O2 -assume byterecl -mcmodel=medium -shared-intel -heap-arrays"
+FFLAGS="-O2 -assume byterecl -mcmodel=medium -shared-intel -heap-arrays -w"
 FFext="-extend-source"
 LDFLAGS="-shared-intel"
 else
